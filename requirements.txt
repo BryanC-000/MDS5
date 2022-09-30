@@ -1,6 +1,6 @@
 Flask==2.2
 Werkzeug==2.2
-opencv-python==4.6.0.66
+opencv-python-headless
 tensorflow-cpu==2.10.0
 numpy==1.23.0
 pillow==9.2.0
