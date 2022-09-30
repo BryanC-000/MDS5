@@ -1,0 +1,366 @@
+* {
+	font-family: 'Source Sans Pro', sans-serif;
+}
+
+h1 {
+	text-align: center;
+	font-size: 1000px;
+	font-weight: normal;
+	margin-bottom: 0px;
+	margin-top: 0px;
+
+}
+header {
+	text-align: center;
+	font-size: 1000px;
+	font-weight: normal;
+	margin-bottom: 0px;
+	margin-top: 0px;
+}
+
+h2 {
+	text-align: left;
+	font-size: 35px;
+	font-weight: lighter;
+	padding: 0px;
+	margin-top: 0px;
+}
+
+p {
+	font-size: 25px;
+	margin-top: 0px;
+	padding: 0px;
+	text-align: justify;
+}
+
+body {
+	background-color: #ffffff;
+}
+
+input[type=file] {
+	padding: 5px;
+	border: 2px solid #EB0486;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#title {
+	font-weight: 100px;
+	font-weight: 200px;
+	text-align: left;
+	margin-left: 30;
+	color: #EB0486;
+	margin-top: 15px;
+	margin-top: 31px; 
+	font-size: 50px;
+}
+
+#note {
+	text-align: left;
+	vertical-align: middle;
+	font-size: 30px;
+	margin-top: 20px;
+	margin-left: 50px;
+}
+
+#results {
+	background-color: #e8d8e1;
+	height: auto;
+	padding-top: 10px;
+	padding-left: 50px;
+	padding-right: 50px;
+	margin-left: 20px;
+	padding-bottom: 10px;
+	;
+}
+
+#pred_btn {
+	margin-top: 50px;
+	text-align: center;
+}
+
+#AboutUsText {
+	font-size: 30px;
+	color: black;
+	text-align: center;
+}
+
+#cancerLogo {
+	width: 150px;
+	height: 125px;
+}
+
+#monashLogo {
+	width:180px;
+	height:125px;
+}
+
+#centreTitleMainAboutUs {
+	font-size: 50px;
+	color: #ff3dab;
+	font-weight: bold;
+}
+
+#buttons-container {
+	text-align: center; 
+	margin-top: 0px;
+}
+
+.page {
+	width: 80%;
+	margin: auto;
+	padding: 50px;
+	padding-top: 35px;
+}
+
+.description h2,
+
+.logoLeft {
+	margin-left: 20px;
+}
+
+.logoRight {
+	float:right; 
+	margin-right:40px; 
+	text-align: right;
+}
+
+.centerTitle {
+	text-align: center;
+	color: black;
+	font-weight: normal;
+	font-size: 50px;
+	margin-bottom: 25px;
+	margin-top: 0px;
+}
+
+.topTitle {
+	text-align: center;
+	color: black;
+	font-weight: normal;
+	font-size: 50px;
+	margin-bottom: 0px;
+}
+
+.centreTitleMain {
+	text-align: center;
+	color: #EB0486;
+	font-weight: normal;
+	font-size: 35px;
+	margin-bottom: 0px;
+}
+
+.btn {
+	font-size: 25px;
+	font-weight: 600;
+	background-color: white;
+	border: 4px solid #575c57;
+	color: #575c57;
+	text-align: center;
+	cursor: pointer;
+	border-radius: 10px;
+	padding: 14px 28px;
+
+}
+
+.btn:hover {
+	background-color: #575c57;
+	color: white;
+}
+
+.loader {
+	border: 16px solid #f3f3f3;
+	/* Light grey */
+	border-top: 16px solid #3498db;
+	/* Blue */
+	border-radius: 50%;
+	width: 120px;
+	height: 120px;
+	animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.description-right-right {
+	padding-left: 50px;
+}
+
+.description-left {
+	padding-right: 20px;
+	margin-right: -100px;
+}
+
+.description-left_z {
+	padding-right: 20px;
+	margin-right: -10px;
+}
+
+.description-middle {
+	padding-right: 20px;
+	margin-right: 40px;
+}
+
+.pure-g {
+	margin-top: 10px;
+}
+
+.pure-u-1-1 {
+	float: left;
+	margin-top: 0px;
+}
+
+.center-item {
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+	display: block;
+}
+
+.mres {
+	display: table-cell;
+	vertical-align: middle;
+	font-weight: normal;
+}
+
+.modelTitle {
+	text-align: left;
+	font-size: 35px;
+	font-weight: bold;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	color: #ff3dab;
+}
+
+.subTitle {
+	text-align: left;
+	font-size: 30px;
+	font-weight: normal;
+	margin-bottom: 0px;
+	font-style: italic;
+	color: black;
+}
+
+.subTitleResults {
+	text-align: left;
+	font-size: 30px;
+	font-weight: bold;
+	margin-bottom: 0px;
+	font-style: italic;
+	color: #ff3dab;
+}
+
+.button2 {
+	font-size: 25px;
+	font-weight: 600;
+	background: white;
+	border: 4px solid #575c57;
+	color: #575c57;
+	text-align: center;
+	cursor: pointer;
+	border-radius: 10px;
+	padding: 14px 28px;
+	position: relative;
+	outline: none;
+	cursor: pointer;
+}
+
+.button2:hover {
+	background-color: #575c57;
+	color: white;
+}
+
+.button:active {
+	background: #e6f3f1;
+}
+
+.button-text {
+	font-size: 25px;
+	font-weight: 600;
+	transition: all 0.2s;
+}
+
+.button2-disabled {
+	font-size: 25px;
+	font-weight: 600;
+	background: white;
+	border: 4px solid #575c57;
+	color: #575c57;
+	text-align: center;
+	cursor: not-allowed;
+	border-radius: 10px;
+	padding: 14px 28px;
+}
+
+.button2--loading .button-text {
+	visibility: hidden;
+	opacity: 0;
+}
+
+.button2--loading::after {
+	content: "";
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	border: 4px solid transparent;
+	border-top-color: black;
+	border-radius: 50%;
+	animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+	from {
+		transform: rotate(0turn);
+	}
+
+	to {
+		transform: rotate(1turn);
+	}
+}
+
+.modelSpan {
+	display:table-cell; 
+	vertical-align:middle; 
+	padding: 15px; 
+	font-weight:normal;
+}
+
+/* Add a black background color to the top navigation */
+.topnav {
+	background-color: #ffc1e4;
+	overflow: hidden;
+	height:fit-content;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+	float: left;
+	color: black;
+	text-align: center;
+	padding: 15px 15px;
+	text-decoration: none;
+	font-size: 25px;
+}
+
+/* Change the color of links on hover */
+.topnav a:hover {
+	background-color: #fff7fb;
+	color: 333;
+}
+
+.result-para {
+	font-size: 35px;
+	text-align: center;
+}
