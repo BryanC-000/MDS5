@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <link rel="stylesheet" href="/static/styles.css">
+        <!-- Import pure.css -->
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+            integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Google font -->
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700;900&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href='path/to/your/ldbtn.min.css' />
+        <!-- Scripts-->
+        <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+        <script src="{{ url_for('static', filename='upload.js') }}"></script>
+        <meta charset=utf-8 />
+        <meta id="my-data" data-name="{{pred1}}">
+    </head>
+
+    <body>
+        <nav class="topnav">
+            <form id="homeToHome" action="http://127.0.0.1:5000/" method="POST" enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToHome').submit()">Home</a>
+            </form>
+            <form id="homeToAboutUs" action="http://127.0.0.1:5000/aboutus" method="POST" enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToAboutUs').submit()">About Us</a>
+            </form>
+            <form id="homeToAboutTheModel" action="http://127.0.0.1:5000/aboutthemodel" method="POST"
+                enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToAboutTheModel').submit()">About the Models</a>
+            </form>
+        </nav>
+
+        <section class="pure-g">
+            <section class="pure-u-1-12">
+                <section class="logoLeft">
+                    <img id="cancerLogo" src="/static/logo.png" alt="logo-removebg-preview">
+                </section>
+            </section>
+            <section class="pure-u-11-12">
+                <section class="pure-u-5-6">
+                    <header id="title">Breast Cancer Diagnosis based on Histology Image</header>
+                </section>
+                <section class="logoRight">
+                    <img  id="monashLogo"  src="/static/Monash_logo.png" alt="Monash_logo-removebg-preview">
+                </section>
+            </section>
+        </section>
+
+        <hr>
+
+        <section class="page">
+            <section class="pure-g">
+                <section class="pure-u-1-1">
+                    <section id="results">
+                        <h1 style="font-size: 40px;">
+                            Your results:
+                        </h1>
+                        <section id="cont_benign" style="display: none">
+                            <p class="result-para">
+                                Good News! Based on our model, your image is classified as having Normal cells.
+                            </p>
+                        </section>
+                        <section id="cont_invasive" style="display: none">
+                            <p class="result-para">
+                                Unfortunately, based on our model, your image is classified as having Invasive cells.
+                            </p>
+                        </section>
+                        <section id="cont_insitu" style="display: none;">
+                            <p class="result-para">
+                                Based on our model, your image is classified as having In Situ cells. This means that 
+                                the model has detected malignant tumor(s) from the histology image. If a tumor is found 
+                                to be malignant, you have breast cancer or another form of cancer. Malignant tumors
+                                can be aggressive and may spread to other surrounding tissues. Thus, they require
+                                immediate treatment. To confirm your results and get treatment, please book an appointment with your doctor as
+                                soon as possible.
+                            </p>
+                        </section>
+                        <section id="cont_normal" style="display: none;">
+                            <p class="result-para">
+                                Good News! Based on our model, your image is classified as having Normal cells.
+                            </p>
+                        </section>
+                        <section id="cont_model1" style="display: none;">
+                            <h2>Model 1: {{pred1}}</h2>
+                        </section>
+                        <section id="cont_model2" style="display: none;">
+                            <h2>Model 2: {{pred2}}</h2>
+                        </section>
+                        <section id="cont_model3" style="display: none;">
+                            <h2>Model 3: {{pred3}}</h2>
+                        </section>
+                        <section id="cont_description" style="display: none;">
+                            <p class="result-para"><br>
+                                These are the results from all the models and can be used as
+                                reference to indicate if the histology image uploaded has cancerous cells.
+                                <br> <br> 
+                                Please also consult a doctor to verify these results.
+                            </p>
+                        </section>
+                    </section>
+                    <section class="pure-u-1-1" id="pred_btn">
+                        <form action="http://127.0.0.1:5000/" method="POST" enctype="multipart/form-data">
+                            <button class="btn" type="submit">Get another diagnosis</button>
+                        </form>
+                    </section>
+                </section>
+
+                <script language="javascript">
+                    var p1 = "{{ pred1 }}";
+                    var p2 = "{{ pred2 }}";
+                    var p3 = "{{ pred3 }}";
+
+                    if (p2 === "NONE" && p3 === "NONE") {
+                        if (p1 === "Benign") {
+                            document.getElementById("cont_benign").style.display = "block";
+                        } else if (p1 === "InSitu") {
+                            document.getElementById('cont_insitu').style.display = "block";
+                        } else if (p1 === "Invasive") {
+                            document.getElementById("cont_invasive").style.display = "block";
+                        } else if (p1 === "Normal") {
+                            document.getElementById("cont_normal").style.display = "block";
+                        }
+                    } else {
+                        document.getElementById("cont_model1").style.display = "block";
+                        document.getElementById("cont_model2").style.display = "block";
+                        document.getElementById("cont_model3").style.display = "block";
+                        document.getElementById("cont_description").style.display = "block";
+                    }
+                </script>
+            </section>
+        </section>
+    </body>
+
+</html>

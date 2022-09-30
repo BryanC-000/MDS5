@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <link rel="stylesheet" href="/static/styles.css">
+        <!-- Import pure.css -->
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+            integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Google font -->
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700;900&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href='path/to/your/ldbtn.min.css' />
+        <!-- Scripts-->
+        <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+        <script src="{{ url_for('static', filename='upload.js') }}"></script>
+        <meta charset=utf-8 />
+    </head>
+
+    <body>
+        <nav class="topnav">
+            <form id="homeToHome" action="http://127.0.0.1:5000/" method="POST" enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToHome').submit()">Home</a>
+            </form>
+            <form id="homeToAboutUs" action="http://127.0.0.1:5000/aboutus" method="POST" enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToAboutUs').submit()">About Us</a>
+            </form>
+            <form id="homeToAboutTheModel" action="http://127.0.0.1:5000/aboutthemodel" method="POST"
+                enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToAboutTheModel').submit()">About the Models</a>
+            </form>
+        </nav>
+
+        <section class="pure-g">
+            <section class="pure-u-1-12">
+                <section class="logoLeft">
+                    <img id="cancerLogo" src="/static/logo.png" alt="logo-removebg-preview">
+                </section>
+            </section>
+            <section class="pure-u-11-12">
+                <section class="pure-u-5-6">
+                    <header id="title">Breast Cancer Diagnosis based on Histology Image</header>
+                </section>
+                <section class="logoRight">
+                    <img  id="monashLogo"  src="/static/Monash_logo.png" alt="Monash_logo-removebg-preview">
+                </section>
+            </section>
+        </section>
+
+        <hr>
+
+        <section class="pure-g">
+            <section class="pure-u-1-1 ">
+                <header class="centreTitleMain">Input a hematoxylin & eosin stained breast histology image for your diagnosis.</header>
+            </section>
+        </section>
+
+        <section class="page" style="text-align: center; margin-top: 5px;">
+            <section class="pure-g">
+                <section class="pure-u-1-1">
+                    <img id="your-image" src="/static/image_placeholder.jpg" alt="image uploaded" width="800" height="600">
+                </section>
+            </section>
+
+            <form action="http://127.0.0.1:5000/uploader" method="POST" enctype="multipart/form-data" style="display:inline-block;">
+                <button class="btn" type="button"
+                    style="display:block; margin-right:10px; margin-top: 20px; float:left; width: 250px;"
+                    onclick="document.getElementById('files').click();
+                    document.getElementById('btn-nextstep').disabled=false;
+                    ">
+                    Upload Image
+                </button>
+                <input type="file" accept=".jpg, .png, .jpeg, .tif" id="files" style="display: none;" value="button text"
+                    name="pic" onchange="readURL(this);">
+
+                <button id="btn-nextstep" class="btn" type="submit" style="margin-top: 20px; width: 250px;">
+                    Next Step
+                </button>
+                <script>
+                    document.getElementById("btn-nextstep").disabled=true;
+                </script>
+            </form>
+
+            <section class="pure-g">
+                <section class="pure-u-1-1 ">
+                    <header class="centreTitleMain" style = "font-size:large;color: red;">* Only accepts JPG/PNG/JPEG/TIF images.</header>
+                </section>
+            </section>
+
+            
+        </section>
+
+
+    </body>
+
+
+</html>

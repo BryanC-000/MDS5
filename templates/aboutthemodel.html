@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <link rel="stylesheet" href="/static/styles.css">
+        <!-- Import pure.css -->
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+            integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Google font -->
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700;900&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href='path/to/your/ldbtn.min.css' />
+        <!-- Scripts-->
+        <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+        <script src="{{ url_for('static', filename='upload.js') }}"></script>
+        <meta charset=utf-8 />
+    </head>
+
+    <body>
+        <nav class="topnav">
+            <form id="homeToHome" action="http://127.0.0.1:5000/" method="POST" enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToHome').submit()">Home</a>
+            </form>
+            <form id="homeToAboutUs" action="http://127.0.0.1:5000/aboutus" method="POST" enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToAboutUs').submit()">About Us</a>
+            </form>
+            <form id="homeToAboutTheModel" action="http://127.0.0.1:5000/aboutthemodel" method="POST"
+                enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToAboutTheModel').submit()">About the Models</a>
+            </form>
+        </nav>
+
+        <section class="pure-g">
+            <section class="pure-u-1-12">
+                <section class="logoLeft">
+                    <img id="cancerLogo" src="/static/logo.png" alt="logo-removebg-preview">
+                </section>
+            </section>
+            <section class="pure-u-11-12">
+                <section class="pure-u-5-6">
+                    <header id="title">Breast Cancer Diagnosis based on Histology Image</header>
+                </section>
+                <section class="logoRight">
+                    <img  id="monashLogo"  src="/static/Monash_logo.png" alt="Monash_logo-removebg-preview">
+                </section>
+            </section>
+        </section>
+
+        <hr>
+
+        <section>
+            <section class="pure-g">
+                <section class="pure-u-1-1">
+                    <header class="topTitle">Introduction to Models Used</header>
+                </section>
+            </section>
+        </section>
+        <section>
+            <section class="page">
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h1 class="modelTitle">
+                            Model 1: InceptionResNetV2 (Our Proposed Model) <br> </h1>
+                        <p>
+                            InceptionResNetV2 is a convolutional neural network that is trained on more than a million
+                            images
+                            from the ImageNet database. The network is 164 layers deep and can classify images into 1000
+                            object
+                            categories, such as keyboard, mouse, pencil, and many animals. This model that is pre-trained on
+                            these object images
+                            has been trained with breast cancer histology images in this architecture such that it will be
+                            able to classify
+                            breast cancer histology images.
+                        </p>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h1 class="modelTitle">Model 2: InceptionV3<br></h1>
+                        <p>
+                            The InceptionV3 model is a superior version of the basic mconvolutional neural network Inception
+                            V1 which
+                            was introduced as GoogLeNet in 2014. It is also pre-trained on the ImageNet database and is 48
+                            layers deep.
+                            This pre-trained model has been trained with breast cancer histology
+                            images in this architecture such that it will be able to classify breast cancer histology
+                            images.
+                        </p>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h1 class="modelTitle">Model 3: ResNet50</h1>
+                        <p>
+                            ResNet50 is a convolutional neural network that is 50 layers deep. This model is also
+                            pre-trained
+                            on the ImageNet database and can classify images into 1000 object categories, such as keyboard,
+                            mouse,
+                            pencil, and many animals. This pre-trained model has been trained with breast cancer histology
+                            images
+                            in this architecture such that it will be able to classify breast cancer histology images.
+                        </p>
+                    </section>
+                </section>
+            </section>
+        </section>
+
+        <section style="background-color: #e8d8e1">
+            <section class="page" >
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h1 class="centerTitle">
+                            How To Interpret Your Results
+                        </h1>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h2 style="text-align: left;">Benign</h2>
+                        <p>
+                            A benign tumor is an abnormal but noncancerous collection of cells.
+                            If you feel a lump in your breast, your first thought may be that you have breast cancer.
+                            Fortunately, a majority of breast lumps are benign, meaning they're not cancerous.
+                            Both women and men can develop benign (noncancerous) breast lumps.
+                        </p>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h2 style="text-align: left;">In Situ</h2>
+                        <p>
+                            In Situ is short for In Situ Carcinoma.
+                            In Situ Carcinoma is a group of abnormal cells that are found only in the place where they first
+                            formed in the body.
+                            These abnormal cells may become cancer and spread to nearby normal tissue.
+                            In general, carcinoma in situ is the earliest form of cancer, and is considered stage 0 cancer
+                            that
+                            has not yet spread.
+                        </p>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h2 style="text-align: left;">Invasive</h2>
+                        <p>
+                            Invasive is short for Invasive Carcinoma.
+                            Invasive Carcinoma cells are cancerous and this means that these abnormal cells growing in the
+                            lining of the milk ducts
+                            have changed and invaded breast tissue beyond the walls of the duct.
+                        </p>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h2 style="text-align: left;">Normal</h2>
+                        <p>
+                            This means that your breast cells are normal and healthy, as there were no abnormal cells
+                            detected!
+                        </p>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </body>
+</html>

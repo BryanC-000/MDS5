@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <link rel="stylesheet" href="/static/styles.css">
+        <!-- Import pure.css -->
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+            integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Google font -->
+        <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;700;900&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href='path/to/your/ldbtn.min.css' />
+        <!-- Scripts-->
+        <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+        <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+        <script src="{{ url_for('static', filename='upload.js') }}"></script>
+        <meta charset=utf-8 />
+    </head>
+
+    <body>
+        <nav class="topnav">
+            <form id="homeToHome" action="http://127.0.0.1:5000/" method="POST" enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToHome').submit()">Home</a>
+            </form>
+            <form id="homeToAboutUs" action="http://127.0.0.1:5000/aboutus" method="POST" enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToAboutUs').submit()">About Us</a>
+            </form>
+            <form id="homeToAboutTheModel" action="http://127.0.0.1:5000/aboutthemodel" method="POST"
+                enctype="multipart/form-data">
+                <a onclick="document.getElementById('homeToAboutTheModel').submit()">About the Models</a>
+            </form>
+        </nav>
+
+        <section class="pure-g">
+            <section class="pure-u-1-12">
+                <section class="logoLeft">
+                    <img id="cancerLogo" src="/static/logo.png" alt="logo-removebg-preview">
+                </section>
+            </section>
+            <section class="pure-u-11-12">
+                <section class="pure-u-5-6">
+                    <header id="title">Breast Cancer Diagnosis based on Histology Image</header>
+                </section>
+                <section class="logoRight">
+                    <img  id="monashLogo"  src="/static/Monash_logo.png" alt="Monash_logo-removebg-preview">
+                </section>
+            </section>
+        </section>
+
+        <hr>
+
+        <section>
+            <section class="page">
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h1 class="centerTitle">How Your Results Will Be Shown</h1>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h1 class="subTitleResults">Proposed Model Only</h1>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-2-5">
+                        <img src="/static/example-image.png" alt="example-image" style="width:100%; height: 100%;">
+                    </section>
+                    <section class="pure-u-3-5">
+                        <h1>
+                            <span class="modelSpan">Model 1: </span>
+                            <span class="mres">In Situ</span>
+                        </h1>
+                    </section>
+
+                </section>
+
+                <section class="pure-g">
+                    <section class="pure-u-1-1">
+                        <h1 class="subTitleResults">All Models</h1>
+                    </section>
+                </section>
+                <section class="pure-g">
+                    <section class="pure-u-2-5">
+                        <img src="/static/example-image.png" alt="example-image" style="width:100%; height: 100%;">
+                    </section>
+                    <section class="pure-u-1-5">
+                        <h1>
+                            <span class="modelSpan">Model 1: </span>
+                            <span class="mres"> In Situ </span>
+                            <br> 
+                            <span class="modelSpan">Model 2: </span>
+                            <span class="mres"> In Situ </span>
+                            <br> 
+                            <span class="modelSpan">Model 3:</span>
+                            <span class="mres"> Normal </span>
+                        </h1>
+                    </section>
+                    <section class="pure-u-2-5">
+                        <h1 id="note">
+                            Note:
+                            <br> 
+                            These models may give different results due to the different
+                            model architectures, parameters and training processes used.
+                            If you choose to get all models' results, choose the most
+                            frequently shown result as your final result.
+                        </h1>
+                    </section>
+                </section>
+            </section>
+        </section>
+
+        <section style="background-color: #e8d8e1">
+            <section class="page" id="buttons-container">
+                <h1 class="centerTitle">Get Your Results!</h1>
+                <form action="http://127.0.0.1:5000/allmodelresult" method="POST" enctype="multipart/form-data" style="display:inline-block">
+                    <button id="btn-all" type="button2" class="button2" type="submit" onclick="
+                                    this.classList.toggle('button2--loading');
+                                    this.form.submit(); 
+                                    this.disabled=true; 
+                                    document.getElementById('btn-proposed').disabled=true;
+                        ">
+                        <span class="button-text">Get All Models' Result</span></button>
+                </form>
+                <form action="http://127.0.0.1:5000/proposedmodelresult" method="POST" enctype="multipart/form-data" style="display:inline-block">
+                    <button id="btn-proposed" type="button2" class="button2" type="submit" onclick="
+                                    this.classList.toggle('button2--loading');
+                                    this.form.submit(); 
+                                    this.disabled=true; 
+                                    document.getElementById('btn-all').disabled=true;
+                                    ">
+                        <span class="button-text">Get Only Proposed Model Result</span>
+                    </button>
+                </form>
+            </section>
+        </section>
+    </body> 
+</html> 
