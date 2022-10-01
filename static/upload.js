@@ -20,7 +20,6 @@ function readURL(input) {
         // alert(file)
         reader.readAsDataURL(input.files[0]);
         
-     
     }
     }
     

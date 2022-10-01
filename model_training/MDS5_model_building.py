@@ -1,3 +1,4 @@
+from distutils.command.build import build
 from pathlib import Path
 import time
 start = time.time()
@@ -32,7 +33,7 @@ def Dataset_loader(DIR, RESIZE, sigmaX=10):
 			IMG.append(np.array(img))              # convert image to numpy array & append to array of images
 	return IMG
 
-def create_labels(array):
+def create_labels(array, num_class):
 	"""
 	Creates labels and shuffles the data given an array of images belonging to different classes
 	"""
@@ -50,7 +51,7 @@ def create_labels(array):
 	np.random.shuffle(s)
 	X = X[s]
 	Y = Y[s]
-	Y = to_categorical(Y, num_classes= 4)
+	Y = to_categorical(Y, num_classes = num_class)
 	return X, Y
 
 def train_valid_test_split(X, Y, train_size, random = 1234):
@@ -87,24 +88,30 @@ def export_images(x, y, labels, path):
 			filepath = f"{path}/{i+1}_{label}.png"
 			data.save(filepath)
 
-def build_model(backbone, lr=1e-4):
-    model = Sequential()
-    model.add(backbone)
-    model.add(layers.GlobalAveragePooling2D(name = "final"))
-    model.add(layers.Dropout(0.5))
-    model.add(layers.BatchNormalization())
-    model.add(layers.Dense(4, activation='softmax'))
-    
-    model.compile(
-        loss='categorical_crossentropy',
-        optimizer=Adam(lr=lr),
-        metrics=['accuracy']
-    )
-    
-    return model
+def build_model(backbone, lr=1e-4, num_class = 4):
+	"""
+	Function to build a model given a backbone model as the feature extractor.
+	"""
+	model = Sequential()
+	model.add(backbone)
+	model.add(layers.GlobalAveragePooling2D(name = "final"))
+	model.add(layers.Dropout(0.5))
+	model.add(layers.BatchNormalization())
+	model.add(layers.Dense(num_class, activation='softmax'))
+
+	model.compile(
+		loss='categorical_crossentropy',
+		optimizer=Adam(lr=lr),
+		metrics=['accuracy']
+	)
+
+	return model
 
 def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filepath):
-	# Using original generator for data augmentation
+	"""
+	Trains a model given the training and validation datasets along with the required hyperparameters
+	"""
+	# Data augmentation
 	train_generator = ImageDataGenerator(
 			zoom_range = 2,  # set range for random zoom
 			rotation_range = 90, # set range for image rotation
@@ -134,6 +141,9 @@ def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filep
 	return history
 
 def evaluate_model(model, weight_path, x_test, y_test):
+	"""
+	Evaluates the performance of a model given a testing dataset
+	"""
 	model.load_weights(weight_path) # load the best checkpoint weights
 	y_pred = model.predict(x_test)   
 	accuracy = accuracy_score(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1)) 
@@ -144,13 +154,21 @@ def evaluate_model(model, weight_path, x_test, y_test):
 	return accuracy, precision, recall, f1
 
 def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, PATH):
+	"""
+	Executes the entire process of:
+	- data loading
+	- data preprocessing
+	- data splitting
+	- model building and training
+	- model evaluation
+	"""
 	# Loading the dataset for each class
 	benign_data = np.array(Dataset_loader('Photos/Benign',IMG_SIZE))
 	insitu_data = np.array(Dataset_loader('Photos/InSitu',IMG_SIZE))
 	invasive_data = np.array(Dataset_loader('Photos/Invasive',IMG_SIZE))
 	normal_data = np.array(Dataset_loader('Photos/Normal',IMG_SIZE))
 
-	X, Y = create_labels([benign_data, insitu_data,invasive_data, normal_data])
+	X, Y = create_labels([benign_data, insitu_data,invasive_data, normal_data], 4)
 
 	x_train, x_val, x_test, y_train, y_val, y_test = train_valid_test_split(X, Y, 0.7)
 	# print(x_test.shape)
@@ -162,16 +180,19 @@ def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, PATH):
 		input_shape=(IMG_SIZE,IMG_SIZE,3)
 	)
 
-	model = build_model(myModel, lr = LEARNING_RATE)
+	model = build_model(myModel, lr = LEARNING_RATE, num_class=4)
 	history = train_model(model, x_train, y_train, x_val, y_val, BATCH_SIZE, EPOCHS, filepath = PATH)
 
 	accuracy, precision, recall, f1 = evaluate_model(model, PATH, x_test, y_test)
 	print(f"Accuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nf1-score: {f1}")
+	tf.keras.models.save_model(model, "saved_model/InceptionResNetV2")    
+	model.save("saved_model/InceptionResNetV2.h5")
+	# tf.keras.model.save_model("saved_model/InceptionResNetV2.h5")
 
 if __name__ == "__main__":
-	IMG_SIZE = 224
+	IMG_SIZE = 299
 	BATCH_SIZE = 16
-	EPOCHS = 40
+	EPOCHS = 50
 	LEARNING_RATE = 0.0001
 	PATH = "weights/weights.InceptionResNetV2.hdf5"
 	main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, PATH)

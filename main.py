@@ -54,7 +54,7 @@ def model_predict(image, all = False):
 @app.route('/uploader', methods = ['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        pic = request.files['pic']
+        pic = request.files['pic'] 
 
         filename = secure_filename(pic.filename) 
         mimetype = pic.mimetype
@@ -70,6 +70,7 @@ def get_and_del_img():
     if not img:
         return 'No image found', 404
 
+    # db.session.query(Img).delete() 
     image = np.array(Image.open(io.BytesIO(img.img))) 
     Img.query.filter_by(id=1).delete()
     db.session.commit()
