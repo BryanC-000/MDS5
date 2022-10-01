@@ -22,13 +22,13 @@
 
     <body>
         <nav class="topnav">
-            <form id="homeToHome" action="http://127.0.0.1:5000/" method="POST" enctype="multipart/form-data">
+            <form id="homeToHome" action="/" method="POST" enctype="multipart/form-data">
                 <a onclick="document.getElementById('homeToHome').submit()">Home</a>
             </form>
-            <form id="homeToAboutUs" action="http://127.0.0.1:5000/aboutus" method="POST" enctype="multipart/form-data">
+            <form id="homeToAboutUs" action="/aboutus" method="POST" enctype="multipart/form-data">
                 <a onclick="document.getElementById('homeToAboutUs').submit()">About Us</a>
             </form>
-            <form id="homeToAboutTheModel" action="http://127.0.0.1:5000/aboutthemodel" method="POST"
+            <form id="homeToAboutTheModel" action="aboutthemodel" method="POST"
                 enctype="multipart/form-data">
                 <a onclick="document.getElementById('homeToAboutTheModel').submit()">About the Models</a>
             </form>
@@ -103,7 +103,7 @@
                         </section>
                     </section>
                     <section class="pure-u-1-1" id="pred_btn">
-                        <form action="http://127.0.0.1:5000/" method="POST" enctype="multipart/form-data">
+                        <form action="/" method="POST" enctype="multipart/form-data">
                             <button class="btn" type="submit">Get another diagnosis</button>
                         </form>
                     </section>
