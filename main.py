@@ -17,11 +17,34 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db_init(app)
 
 @app.route('/', methods=['GET', 'POST'])
-def upload_f(): 
+def home():
+    """
+    Renders the upload page and ensures that the database is empty
+    """ 
+    delete_images()
     return render_template('upload.html')
 
+@app.route('/aboutus', methods = ['GET', 'POST'])
+def about_us():
+    """
+    Renders the about us page
+    """
+    if request.method == 'POST':
+        return render_template('aboutus.html')      
+
+@app.route('/aboutthemodel', methods = ['GET', 'POST'])
+def about_the_model():
+    """
+    Renders the about the model page
+    """
+    if request.method == 'POST':
+        return render_template('aboutthemodel.html')        
+
 def model_predict(image, all = False):
-    path1="saved_model/InceptionResNetV2"
+    """
+    Gets the predicted class for the given image using only proposed model or all models
+    """
+    path1="model_training/saved_model/somemodel.h5"
     model1 = tf.keras.models.load_model(path1)
     vals = ["Benign","InSitu","Invasive","Normal"]
 
@@ -33,9 +56,9 @@ def model_predict(image, all = False):
     pred1 = model1.predict(data) 
 
     if all:
-        path2="saved_model/InceptionV3"
+        path2="model_training/saved_model/InceptionV3.h5"
         model2 = tf.keras.models.load_model(path2)
-        path3="saved_model/ResNet50"
+        path3="model_training/saved_model/ResNet50.h5"
         model3 = tf.keras.models.load_model(path3)
         read = lambda imname: np.asarray(Image.open(imname).convert("RGB"))
 
@@ -51,8 +74,11 @@ def model_predict(image, all = False):
 
     return str(vals[np.argmax(pred1)]), "NONE", "NONE"
 
-@app.route('/uploader', methods = ['GET', 'POST'])
+@app.route('/uploaded', methods = ['GET', 'POST'])
 def upload_file():
+    """
+    Renders the page after an image is uploaded and adds the image into the database
+    """
     if request.method == 'POST':
         pic = request.files['pic'] 
 
@@ -65,41 +91,42 @@ def upload_file():
 
         return render_template('beforeresults.html') 
 
-def get_and_del_img():
+def get_image():
+    """
+    Retrieves the image inputted from the database
+    """
     img = Img.query.filter_by(id=1).first()
     if not img:
         return 'No image found', 404
-
-    # db.session.query(Img).delete() 
     image = np.array(Image.open(io.BytesIO(img.img))) 
-    Img.query.filter_by(id=1).delete()
-    db.session.commit()
     return image 
+
+def delete_images():
+    """
+    Deletes all images in the database
+    """
+    db.session.query(Img).delete() 
+    db.session.commit()
 
 @app.route('/proposedmodelresult', methods = ['GET', 'POST'])
 def predict():
+    """
+    Gets the prediction using the proposed model and displays the results screen
+    """
     if request.method == 'POST':
-        img = get_and_del_img()
+        img = get_image()
         val1, val2, val3 = model_predict(img, all = False) # only proposed model predicted result
         return render_template('results.html', pred1=val1, pred2=val2, pred3=val3)   
-        return None
 
 @app.route('/allmodelresult', methods = ['GET', 'POST'])
-def predict2():
+def predict_all():
+    """
+    Gets the prediction using all models and displays the results screen
+    """
     if request.method == 'POST':
-        img = get_and_del_img()
+        img = get_image()
         val1, val2, val3 = model_predict(img, all = True) # all models' predicted results
-        return render_template('results.html', pred1=val1, pred2=val2, pred3=val3)        
-
-@app.route('/aboutus', methods = ['GET', 'POST'])
-def aboutus():
-    if request.method == 'POST':
-        return render_template('aboutus.html')      
-
-@app.route('/aboutthemodel', methods = ['GET', 'POST'])
-def aboutthemodel():
-    if request.method == 'POST':
-        return render_template('aboutthemodel.html')                    
+        return render_template('results.html', pred1=val1, pred2=val2, pred3=val3)                       
 
 if __name__ == '__main__':
     app.run()
