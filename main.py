@@ -44,7 +44,7 @@ def model_predict(image, all = False):
     """
     Gets the predicted class for the given image using only proposed model or all models
     """
-    path1="model_training/saved_model/somemodel.h5"
+    path1="model_training/saved_model/InceptionResNetV2.h5"
     model1 = tf.keras.models.load_model(path1)
     vals = ["Benign","InSitu","Invasive","Normal"]
 
