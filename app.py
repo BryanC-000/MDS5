@@ -13,8 +13,8 @@ from models import Img
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploaded'
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://lmsbetafbhatex:1f0846d30373368a26ac5e42cc5c7ef84e46ff17e92fae8a497f3e028b2e9cfa@ec2-18-209-78-11.compute-1.amazonaws.com:5432/d5sp11rdepbqda"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://lmsbetafbhatex:1f0846d30373368a26ac5e42cc5c7ef84e46ff17e92fae8a497f3e028b2e9cfa@ec2-18-209-78-11.compute-1.amazonaws.com:5432/d5sp11rdepbqda"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db_init(app)
 
