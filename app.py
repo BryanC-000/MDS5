@@ -97,7 +97,7 @@ def get_image():
     """
     Retrieves the image inputted from the database
     """
-    img = Img.query.filter_by(id=1).first()
+    img = db.session.query(Img).first()
     if not img:
         return 'No image found', 404
     image = np.array(Image.open(io.BytesIO(img.img))) 
