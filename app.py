@@ -7,23 +7,27 @@ import psycopg2
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 from PIL import Image
+from flask_sqlalchemy import SQLAlchemy
 
 from db import db_init, db
-from models import Img
+from models import image
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploaded'
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://lmsbetafbhatex:1f0846d30373368a26ac5e42cc5c7ef84e46ff17e92fae8a497f3e028b2e9cfa@ec2-18-209-78-11.compute-1.amazonaws.com:5432/d5sp11rdepbqda"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5_image"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://luxlbtrzozmgcr:d9322377c64d8af2b12e5037fbd6bd2b44e346fc240933b4a497ee67b0229d36@ec2-44-195-132-31.compute-1.amazonaws.com:5432/d9r2dmq3hnt53v"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db_init(app)
+# db_init(app)
+db = SQLAlchemy(app)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
     """
     Renders the upload page and ensures that the database is empty
     """ 
-    delete_images()
+    # delete_images()
     return render_template('upload.html')
 
 @app.route('/aboutus', methods = ['GET', 'POST'])
@@ -87,28 +91,28 @@ def upload_file():
         filename = secure_filename(pic.filename) 
         mimetype = pic.mimetype
 
-        # img = Img(img = pic.read(), mimetype = mimetype, name = filename)
-        img = Img(mimetype = mimetype, name = filename)
+        img = image(img = pic.read(), mimetype = mimetype, name = filename)
+        # img = Img(mimetype = mimetype, name = filename)
         db.session.add(img)
         db.session.commit()
 
         return render_template('beforeresults.html') 
 
-def get_image():
+def get_image(db=db): # added db argument for testing
     """
     Retrieves the image inputted from the database
     """
-    img = db.session.query(Img).first()
-    if not img:
+    retrieved_img = db.session.query(image).first()
+    if not retrieved_img:
         return 'No image found', 404
-    image = np.array(Image.open(io.BytesIO(img.img))) 
-    return image 
+    ret_img = np.array(Image.open(io.BytesIO(retrieved_img.img))) 
+    return ret_img 
 
-def delete_images():
+def delete_images(db=db): # added db argument for testing
     """
     Deletes all images in the database
     """
-    db.session.query(Img).delete() 
+    db.session.query(image).delete() 
     db.session.commit()
 
 @app.route('/proposedmodelresult', methods = ['GET', 'POST'])
@@ -132,4 +136,6 @@ def predict_all():
         return render_template('results.html', pred1=val1, pred2=val2, pred3=val3)                       
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run()
