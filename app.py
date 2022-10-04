@@ -15,8 +15,8 @@ from models import image
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploaded'
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5_image"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://luxlbtrzozmgcr:d9322377c64d8af2b12e5037fbd6bd2b44e346fc240933b4a497ee67b0229d36@ec2-44-195-132-31.compute-1.amazonaws.com:5432/d9r2dmq3hnt53v"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5_image"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://qwkupolrhbotbb:79788c40d960331a9d2f0bec8c5604b21590da9f18edddb13d9b3bc9891ad104@ec2-52-54-212-232.compute-1.amazonaws.com:5432/d9cp1tc750akj4"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # db_init(app)
 db = SQLAlchemy(app)
@@ -27,7 +27,7 @@ def home():
     """
     Renders the upload page and ensures that the database is empty
     """ 
-    # delete_images()
+    delete_images()
     return render_template('upload.html')
 
 @app.route('/aboutus', methods = ['GET', 'POST'])
