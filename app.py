@@ -16,12 +16,19 @@ from models import image
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploaded'
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5_image"
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://qwkupolrhbotbb:79788c40d960331a9d2f0bec8c5604b21590da9f18edddb13d9b3bc9891ad104@ec2-52-54-212-232.compute-1.amazonaws.com:5432/d9cp1tc750akj4"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://qwkupolrhbotbb:79788c40d960331a9d2f0bec8c5604b21590da9f18edddb13d9b3bc9891ad104@ec2-52-54-212-232.compute-1.amazonaws.com:5432/d9cp1tc750akj4"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # db_init(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
+
+path1='model_training/saved_model/InceptionResnetV2.h5'
+model1 = tf.keras.models.load_model(path1)
+path2="model_training/saved_model/InceptionV3.h5"
+model2 = tf.keras.models.load_model(path2)
+path3="model_training/saved_model/ResNet50.h5"
+model3 = tf.keras.models.load_model(path3)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -51,8 +58,7 @@ def model_predict(image, all = False):
     """
     Gets the predicted class for the given image using only proposed model or all models
     """
-    path1='model_training/saved_model/InceptionResnetV2.h5'
-    model1 = tf.keras.models.load_model(path1)
+    
     vals = ["Benign","InSitu","Invasive","Normal"]
 
     IMG = []
@@ -63,10 +69,6 @@ def model_predict(image, all = False):
     pred1 = model1.predict(data) 
 
     if all:
-        path2="model_training/saved_model/InceptionV3.h5"
-        model2 = tf.keras.models.load_model(path2)
-        path3="model_training/saved_model/ResNet50.h5"
-        model3 = tf.keras.models.load_model(path3)
         read = lambda imname: np.asarray(Image.open(imname).convert("RGB"))
 
         pred2 = model2.predict(data) 
@@ -103,7 +105,8 @@ def get_image(db=db): # added db argument for testing
     """
     Retrieves the image inputted from the database
     """
-    retrieved_img = db.session.query(image).first()
+    # retrieved_img = db.session.query(image).first()
+    retrieved_img = db.session.query(image).order_by(image.id.desc()).first()
     if not retrieved_img:
         return 'No image found', 404
     ret_img = np.array(Image.open(io.BytesIO(retrieved_img.img))) 
