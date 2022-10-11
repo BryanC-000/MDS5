@@ -26,18 +26,18 @@ migrate = Migrate(app,db)
 
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "credentials.json"
 
-path1='model_training/saved_model/InceptionResnetV2.h5'
-path2="model_training/saved_model/InceptionV3.h5"
-path3="model_training/saved_model/ResNet50.h5"
+# path1='model_training/saved_model/InceptionResnetV2.h5'
+# path2="model_training/saved_model/InceptionV3.h5"
+# path3="model_training/saved_model/ResNet50.h5"
 
 bucket_path = "gs://mds5_bucket_1"
 # path1 = bucket_path + "/InceptionResNetV2"
-# path2 = bucket_path + "/InceptionV3"
+path2 = bucket_path + "/InceptionV3"
 # path3 = bucket_path + "/ResNet50"
 
-model1 = tf.keras.models.load_model(path1)
+model1 = tf.keras.models.load_model(path2)
 model2 = tf.keras.models.load_model(path2)
-model3 = tf.keras.models.load_model(path3)
+model3 = tf.keras.models.load_model(path2)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
