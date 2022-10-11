@@ -5,21 +5,26 @@ import shutil
 import os
 import cv2
 import json
+import itertools
 
 import numpy as np
 import tensorflow as tf
+import pandas as pd
+import matplotlib.pyplot as plt
+
 from tqdm import tqdm
 from PIL import Image
 from keras import layers
 from keras.applications import ResNet50, InceptionV3, InceptionResNetV2
-from keras.callbacks import Callback, ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
+from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils.np_utils import to_categorical
 from keras.models import Sequential
 from keras.optimizers import Adam
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, classification_report
 
-def Dataset_loader(DIR, RESIZE, sigmaX=10):
+def Dataset_loader(DIR, RESIZE):
 	"""
 	Function to load images
 	"""
@@ -141,6 +146,81 @@ def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filep
 	
 	return history
 
+def evaluate_model(model, x_test, y_test):
+	"""
+	Evaluates the performance of a model given a testing dataset
+	"""
+	y_pred = model.predict(x_test)   
+	accuracy = accuracy_score(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1)) 
+	precision = precision_score(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1), average="macro") 
+	recall = recall_score(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1), average="macro") 
+	f1 = f1_score(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1), average="macro") 
+
+	return accuracy, precision, recall, f1
+
+def kfold(k, x_train, y_train, model):
+    """
+    K fold cross validation
+    """
+    kf = KFold(n_splits=k, random_state=None)
+ 
+    acc_score = []
+    prec_score = []
+    recall_score = []
+    f1_score = []
+
+    for train_index , test_index in kf.split(x_train):
+        x_train_kf , x_test_kf = x_train[train_index],x_train[test_index]
+        y_train_kf , y_test_kf = y_train[train_index] , y_train[test_index]
+        y_test_kf = np.argmax(y_test_kf, axis=1) 
+        
+        model.fit(x_train_kf,y_train_kf)
+        pred_values = model.predict(x_test_kf)
+        pred_values=np.argmax(pred_values, axis=1)
+        acc = accuracy_score(pred_values , y_test_kf)
+        prec = precision_score(pred_values , y_test_kf, average='micro')
+        report = classification_report(y_test_kf, pred_values) 
+        print(report)
+        
+        acc_score.append(acc)
+        prec_score.append(prec)
+
+    avg_acc_score = sum(acc_score)/k
+
+    return avg_acc_score
+
+def plot_confusion_matrix(y_test, y_pred, classes, title, normalize = False):
+    """
+    Plot a confusion matrix
+    """
+    cm = confusion_matrix(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1))
+    plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=55)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt), horizontalalignment="center", color="white" if cm[i, j] > thresh else "black")
+
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    plt.tight_layout()
+
+    return cm
+
+def plot_training_progress(history):
+    """
+    Plot graph of training progress
+    """
+    # with open("model_training/history.json", 'r') as f:
+    #     history = json.loads(f.read())
+    history_df = pd.DataFrame(history.history)
+    history_df[['accuracy', 'val_accuracy','loss', 'val_loss']].plot()
+
 def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, WEIGHT_PATH, SAVE_PATH):
 	"""
 	Executes the entire process of:
@@ -170,17 +250,34 @@ def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, WEIGHT_PATH, SAVE_PATH):
 	model = build_model(myModel, lr = LEARNING_RATE, num_class=4)
 	print("Training model")
 	history = train_model(model, x_train, y_train, x_val, y_val, BATCH_SIZE, EPOCHS, filepath = WEIGHT_PATH)
+
 	print("Saving model")
 	with open('model_training/history.json', 'w') as f:
 		json.dump(str(history.history), f)
 	model.save(SAVE_PATH)
 
+	# Evaluate performance metrics
+	accuracy, precision, recall, f1 = evaluate_model(model, x_test, y_test)
+	print("Performance metrics of model")
+	print(f"Accuracy: {accuracy}\nPrecision: {precision}\nRecall: {recall}\nf1-score: {f1}")
+
+    # K Fold
+	print("K-Fold cross validation")
+	avg_accuracy = kfold(5, x_train, y_train, model)
+	print('Avg accuracy : {}'.format(avg_accuracy))
+
+    # Confusion Matrix
+	y_pred = model.predict(x_test)
+	cm = plot_confusion_matrix(y_test, y_pred, ['benign', 'insitu', 'invasive', 'normal'] , title ='Confusion Metrix for Breast Cancer')
+	print("Confusion Matrix")
+	print(cm)
+
 
 if __name__ == "__main__":
 	IMG_SIZE = 299
 	BATCH_SIZE = 16
-	EPOCHS = 50
+	EPOCHS = 5
 	LEARNING_RATE = 0.0001
-	WEIGHT_PATH = "weights/weights.somemodel.hdf5"
-	SAVE_PATH = "saved_model/somemodel.h5"
+	WEIGHT_PATH = "model_training/weights/weights.somemodel.hdf5"
+	SAVE_PATH = "model_training/saved_model/somemodel.h5"
 	main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, WEIGHT_PATH, SAVE_PATH)
