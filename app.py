@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import io
+import os
 import psycopg2
 
 from flask import Flask, render_template, request
@@ -23,11 +24,19 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
 
-path1='model_training/saved_model/InceptionResnetV2.h5'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "credentials.json"
+
+# path1='model_training/saved_model/InceptionResnetV2.h5'
+# path2="model_training/saved_model/InceptionV3.h5"
+# path3="model_training/saved_model/ResNet50.h5"
+
+bucket_path = "gs://mds5_bucket_1"
+path1 = bucket_path + "/InceptionResNetV2"
+path2 = bucket_path + "/InceptionV3"
+path3 = bucket_path + "/ResNet50"
+
 model1 = tf.keras.models.load_model(path1)
-path2="model_training/saved_model/InceptionV3.h5"
 model2 = tf.keras.models.load_model(path2)
-path3="model_training/saved_model/ResNet50.h5"
 model3 = tf.keras.models.load_model(path3)
 
 @app.route('/', methods=['GET', 'POST'])
