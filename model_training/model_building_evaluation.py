@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from PIL import Image
+from tensorflow import keras
 from keras import layers
 from keras.applications import ResNet50, InceptionV3, InceptionResNetV2
 from keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping
@@ -94,23 +95,33 @@ def export_images(x, y, labels, path):
 			filepath = f"{path}/{i+1}_{label}.png"
 			data.save(filepath)
 
-def build_model(backbone, lr=1e-4, num_class = 4):
+def build_model(backbone, lr=1e-4, opt = "adam", include = False, num_class = 4):
 	"""
 	Function to build a model given a backbone model as the feature extractor.
 	"""
 	model = Sequential()
 	model.add(backbone)
 	model.add(layers.GlobalAveragePooling2D(name = "final"))
-	model.add(layers.Dropout(0.5))
-	model.add(layers.BatchNormalization())
+	if include:
+		model.add(layers.Dropout(0.5))
+		model.add(layers.BatchNormalization())
 	model.add(layers.Dense(num_class, activation='softmax'))
+	
+	if opt == 'adam':
+		optimizer = keras.optimizers.Adam(lr)
+	elif opt == 'nadam':
+		optimizer = keras.optimizers.Nadam(lr)
+	elif opt == 'adagrad':
+		optimizer = keras.optimizers.Adagrad(lr)
+	elif opt == 'rmsprop':
+		optimizer = keras.optimizers.RMSprop(lr)
+	elif opt == 'adadelta':
+		optimizer = keras.optimizers.Adadelta(lr)
+	else:
+		optimizer = keras.optimizers.SGD(lr)   
 
-	model.compile(
-		loss='categorical_crossentropy',
-		optimizer=Adam(lr=lr),
-		metrics=['accuracy']
-	)
-
+	model.compile(loss='categorical_crossentropy',optimizer=optimizer,metrics=['accuracy'])
+	
 	return model
 
 def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filepath):
@@ -221,7 +232,7 @@ def plot_training_progress(history):
     history_df = pd.DataFrame(history.history)
     history_df[['accuracy', 'val_accuracy','loss', 'val_loss']].plot()
 
-def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, WEIGHT_PATH, SAVE_PATH):
+def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE, WEIGHT_PATH, SAVE_PATH, BASE_MODEL):
 	"""
 	Executes the entire process of:
 	- data loading
@@ -241,13 +252,14 @@ def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, WEIGHT_PATH, SAVE_PATH):
 
 	export_images(x_test, y_test, labels = ["benign", "insitu", "invasive", "normal"], path = "exported_images")
 
-	myModel = InceptionResNetV2(
-		weights='imagenet',
-		include_top=False,
-		input_shape=(IMG_SIZE,IMG_SIZE,3)
-	)
+	if BASE_MODEL == "InceptionResNetV2":
+		myModel = InceptionResNetV2(weights='imagenet',include_top=False,input_shape=(IMG_SIZE,IMG_SIZE,3))
+	elif BASE_MODEL == "InceptionV3":
+		myModel = InceptionV3(weights='imagenet',include_top=False,input_shape=(IMG_SIZE,IMG_SIZE,3))
+	else:	
+		myModel = ResNet50(weights='imagenet',include_top=False,input_shape=(IMG_SIZE,IMG_SIZE,3))
 
-	model = build_model(myModel, lr = LEARNING_RATE, num_class=4)
+	model = build_model(myModel, lr = LEARNING_RATE, opt = OPTIMIZER, include = INCLUDE, num_class=4)
 	print("Training model")
 	history = train_model(model, x_train, y_train, x_val, y_val, BATCH_SIZE, EPOCHS, filepath = WEIGHT_PATH)
 
@@ -272,12 +284,15 @@ def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, WEIGHT_PATH, SAVE_PATH):
 	print("Confusion Matrix")
 	print(cm)
 
-
 if __name__ == "__main__":
 	IMG_SIZE = 299
 	BATCH_SIZE = 16
 	EPOCHS = 5
 	LEARNING_RATE = 0.0001
+	OPTIMIZER = "adam"
+	INCLUDE_BN_DROPOUT = True
 	WEIGHT_PATH = "model_training/weights/weights.somemodel.hdf5"
 	SAVE_PATH = "model_training/saved_model/somemodel.h5"
-	main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, WEIGHT_PATH, SAVE_PATH)
+	BASE_MODEL = "InceptionResNetV2"
+
+	main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE_BN_DROPOUT, WEIGHT_PATH, SAVE_PATH, BASE_MODEL)
