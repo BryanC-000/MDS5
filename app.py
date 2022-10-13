@@ -17,27 +17,28 @@ from models import image
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploaded'
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5"
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://qwkupolrhbotbb:79788c40d960331a9d2f0bec8c5604b21590da9f18edddb13d9b3bc9891ad104@ec2-52-54-212-232.compute-1.amazonaws.com:5432/d9cp1tc750akj4"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5"
+# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://qwkupolrhbotbb:79788c40d960331a9d2f0bec8c5604b21590da9f18edddb13d9b3bc9891ad104@ec2-52-54-212-232.compute-1.amazonaws.com:5432/d9cp1tc750akj4"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # db_init(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "credentials.json"
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "credentials.json"
 
-# path1='model_training/saved_model/InceptionResnetV2.h5'
-# path2="model_training/saved_model/InceptionV3.h5"
-# path3="model_training/saved_model/ResNet50.h5"
+path1='model_training/saved_model/InceptionResnetV2.h5'
+path2="model_training/saved_model/InceptionV3.h5"
+path3="model_training/saved_model/ResNet50.h5"
 
-bucket_path = "gs://mds5_bucket_1"
+# Path to google cloud model
+# bucket_path = "gs://mds5_bucket_1"
 # path1 = bucket_path + "/InceptionResNetV2"
-path2 = bucket_path + "/InceptionV3"
+# path2 = bucket_path + "/InceptionV3"
 # path3 = bucket_path + "/ResNet50"
 
-model1 = tf.keras.models.load_model(path2)
+model1 = tf.keras.models.load_model(path1)
 model2 = tf.keras.models.load_model(path2)
-model3 = tf.keras.models.load_model(path2)
+model3 = tf.keras.models.load_model(path3)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
