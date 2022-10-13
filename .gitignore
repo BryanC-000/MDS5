@@ -1,0 +1,11 @@
+model_training/Photos
+model_training/dataset
+model_training/weights
+model_training/saved_model
+exported_images
+__pycache__
+.vercel
+testing/testing_files/test_exported_images
+testing/testing_files/test_train_model
+testing/testing_files/test_images
+
