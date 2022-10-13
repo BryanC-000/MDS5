@@ -10,6 +10,7 @@ import os
 from tqdm import tqdm
 from keras.applications import ResNet50, InceptionV3, InceptionResNetV2
 import tensorflow as tf
+from tensorflow import keras
 from unittest.mock import Mock, MagicMock, patch
 
 class BuildModelTest(unittest.TestCase):
@@ -95,9 +96,45 @@ class BuildModelTest(unittest.TestCase):
             only_img_name ,_= IMAGE_NAME.split('.')
             self.assertRegex(only_img_name,r'^([1-3])(_benign|_insitu|_invasive|_normal)$') #test if exported file format is correct
 
-    def test_build_model(self):
+    def test_build_model_optimizer_adam(self):
         self.assertIsNotNone(self.model)
+        self.assertEqual(type(self.model.optimizer), keras.optimizers.Adam)
         layer = self.model.get_layer('dense')
+        self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
+
+    def test_build_model_optimizer_nadam(self):
+        self.assertIsNotNone(model_nadam)
+        model_nadam = model_building_evaluation.build_model(self.myModel,0.0001,'nadam')
+        self.assertEqual(type(model_nadam.optimizer), keras.optimizers.Nadam)
+        layer = model_nadam.get_layer('dense_3')
+        self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
+
+    def test_build_model_optimizer_adagrad(self):
+        self.assertIsNotNone(model_adagrad)
+        model_adagrad = model_building_evaluation.build_model(self.myModel,0.0001,'adagrad')
+        self.assertEqual(type(model_adagrad.optimizer), keras.optimizers.Adagrad)
+        layer = model_adagrad.get_layer('dense_2')
+        self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
+
+    def test_build_model_optimizer_rmsprop(self):
+        self.assertIsNotNone(model_rmsprop)
+        model_rmsprop = model_building_evaluation.build_model(self.myModel,0.0001,'rmsprop')
+        self.assertEqual(type(model_rmsprop.optimizer), keras.optimizers.RMSprop)
+        layer = model_rmsprop.get_layer('dense_4')
+        self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
+
+    def test_build_model_optimizer_adadelta(self):
+        self.assertIsNotNone(model_adadelta)
+        model_adadelta = model_building_evaluation.build_model(self.myModel,0.0001,'adadelta')
+        self.assertEqual(type(model_adadelta.optimizer), keras.optimizers.Adadelta)
+        layer = model_adadelta.get_layer('dense_1')
+        self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
+
+    def test_build_model_optimizer_sgd(self):
+        self.assertIsNotNone(model_sgd)
+        model_sgd = model_building_evaluation.build_model(self.myModel,0.0001,'sgd')
+        self.assertEqual(type(model_sgd.optimizer), keras.optimizers.SGD)
+        layer = model_sgd.get_layer('dense_5')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_train_model(self):
