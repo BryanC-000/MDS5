@@ -2,6 +2,7 @@ model_training/Photos
 model_training/dataset
 model_training/weights
 model_training/saved_model
+model_training/history.json
 exported_images
 __pycache__
 .vercel
