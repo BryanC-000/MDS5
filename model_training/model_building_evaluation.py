@@ -285,14 +285,14 @@ def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE, WEIGHT
 	print(cm)
 
 if __name__ == "__main__":
-	IMG_SIZE = 299
+	IMG_SIZE = 224
 	BATCH_SIZE = 16
-	EPOCHS = 5
+	EPOCHS = 50
 	LEARNING_RATE = 0.0001
 	OPTIMIZER = "adam"
 	INCLUDE_BN_DROPOUT = True
-	WEIGHT_PATH = "model_training/weights/weights.somemodel.hdf5"
-	SAVE_PATH = "model_training/saved_model/somemodel.h5"
+	WEIGHT_PATH = "model_training/weights/weights.InceptionResNetV2.hdf5"
+	SAVE_PATH = "model_training/saved_model/InceptionResNetV2.h5"
 	BASE_MODEL = "InceptionResNetV2"
 
 	main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE_BN_DROPOUT, WEIGHT_PATH, SAVE_PATH, BASE_MODEL)
