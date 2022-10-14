@@ -39,19 +39,25 @@ class BuildModelTest(unittest.TestCase):
 
     def test_load_images_multiple_png(self):
         """
-
+        Function to test whether png images can be loaded successfully
         """
         resize = 299
         normal_png_image = model_building_evaluation.Dataset_loader('testing/testing_files/test_load_images/PNG', resize)
         self.assertEqual(len(normal_png_image), 0)
 
     def test_load_images_multiple_tif(self):
+        """
+        Function to test whether tif images can be loaded successfully
+        """
         resize = 299
         normal_tif_image = model_building_evaluation.Dataset_loader('testing/testing_files/test_load_images/TIF', resize)
         self.assertEqual(normal_tif_image[0].shape, (resize,resize,3))
         self.assertEqual(len(normal_tif_image), 5)
 
     def test_create_labels(self):
+        """
+        Function to test whether the labels are shuffled and created successfully and encoded in 1-hot
+        """
         X = np.concatenate(tuple([data for data in self.array]), axis = 0)
         ori_labels = [0] * len(self.array)
         for i in range(len(self.array)):
@@ -69,6 +75,9 @@ class BuildModelTest(unittest.TestCase):
                 self.assertTrue(x==0.0 or x==1.0) #test if its one-hot encoded
 
     def test_train_valid_test_split(self):
+        """
+        Function to test whether the training, testing, and validation dataset are split into correct proportion
+        """
         # Loading the dataset for each class
         self.assertEqual(self.x_train.shape[0],self.X.shape[0]*0.6)
         self.assertEqual(self.y_train.shape[0],self.Y.shape[0]*0.6)
@@ -84,6 +93,9 @@ class BuildModelTest(unittest.TestCase):
         self.assertEqual(self.x_val.shape[0],1)
 
     def test_export_images(self):
+        """
+        Function to test if the images are exported into the correct file path and named in correct format
+        """
         # check if naming with label
         # check if the images are saved correctly in the correct path given
         # test try except
@@ -97,50 +109,89 @@ class BuildModelTest(unittest.TestCase):
             self.assertRegex(only_img_name,r'^([1-3])(_benign|_insitu|_invasive|_normal)$') #test if exported file format is correct
 
     def test_build_model_optimizer_adam(self):
+        """
+        Function to test if the optimizer used was Adam with correct output neurons
+        """
         self.assertIsNotNone(self.model)
         self.assertEqual(type(self.model.optimizer), keras.optimizers.Adam)
         layer = self.model.get_layer('dense')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_nadam(self):
-        self.assertIsNotNone(model_nadam)
+        """
+        Function to test if the optimizer used was nadam with correct output neurons
+        """
         model_nadam = model_building_evaluation.build_model(self.myModel,0.0001,'nadam')
+        self.assertIsNotNone(model_nadam)
         self.assertEqual(type(model_nadam.optimizer), keras.optimizers.Nadam)
-        layer = model_nadam.get_layer('dense_3')
+        layer = model_nadam.get_layer('dense_4')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_adagrad(self):
-        self.assertIsNotNone(model_adagrad)
+        """
+        Function to test if the optimizer used was adagrad with correct output neurons
+        """
         model_adagrad = model_building_evaluation.build_model(self.myModel,0.0001,'adagrad')
+        self.assertIsNotNone(model_adagrad)
         self.assertEqual(type(model_adagrad.optimizer), keras.optimizers.Adagrad)
-        layer = model_adagrad.get_layer('dense_2')
+        layer = model_adagrad.get_layer('dense_3')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_rmsprop(self):
-        self.assertIsNotNone(model_rmsprop)
+        """
+        Function to test if the optimizer used was rmsprop with correct output neurons
+        """
         model_rmsprop = model_building_evaluation.build_model(self.myModel,0.0001,'rmsprop')
+        self.assertIsNotNone(model_rmsprop)
         self.assertEqual(type(model_rmsprop.optimizer), keras.optimizers.RMSprop)
-        layer = model_rmsprop.get_layer('dense_4')
+        layer = model_rmsprop.get_layer('dense_5')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_adadelta(self):
-        self.assertIsNotNone(model_adadelta)
+        """
+        Function to test if the optimizer used was Adadelta with correct output neurons
+        """
         model_adadelta = model_building_evaluation.build_model(self.myModel,0.0001,'adadelta')
+        self.assertIsNotNone(model_adadelta)
         self.assertEqual(type(model_adadelta.optimizer), keras.optimizers.Adadelta)
-        layer = model_adadelta.get_layer('dense_1')
+        layer = model_adadelta.get_layer('dense_2')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_sgd(self):
-        self.assertIsNotNone(model_sgd)
+        """
+        Function to test if the optimizer used was sgd with correct output neurons
+        """
         model_sgd = model_building_evaluation.build_model(self.myModel,0.0001,'sgd')
+        self.assertIsNotNone(model_sgd)
         self.assertEqual(type(model_sgd.optimizer), keras.optimizers.SGD)
-        layer = model_sgd.get_layer('dense_5')
+        layer = model_sgd.get_layer('dense_6')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
+    def test_build_model_include_false(self):
+        """
+        Function to test if the batch normalisation and drop out layers are not included
+        """
+        self.assertIsNotNone(self.model)
+        self.assertEqual(len(self.model.layers),3)
+
+    def test_build_model_include_true(self):
+        """
+        Function to test if the batch normalisation and drop out layers are included
+        """
+        model_include =  model_building_evaluation.build_model(self.myModel,0.0001,include = True)
+        self.assertIsNotNone(model_include)
+        self.assertEqual(len(model_include.layers),5)
+
     def test_train_model(self):
+        """
+        Function to test if the model history is existent 
+        """
         self.assertIsNotNone(self.history)
 
     def test_evaluate_model(self):
+        """
+        Function to test the evaluation metrics are all in correct range 
+        """
         # test range of accuracy
         self.assertTrue(self.accuracy >= 0.0 and self.accuracy <= 1.0)
         # test range of precision
