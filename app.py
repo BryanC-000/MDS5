@@ -2,39 +2,24 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import io
-import os
-import psycopg2
 
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 from PIL import Image
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 
-from db import db_init, db
+from db import db
 from models import image
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploaded'
-# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///img.db"
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5"
-# app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://qwkupolrhbotbb:79788c40d960331a9d2f0bec8c5604b21590da9f18edddb13d9b3bc9891ad104@ec2-52-54-212-232.compute-1.amazonaws.com:5432/d9cp1tc750akj4"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# db_init(app)
 db = SQLAlchemy(app)
-migrate = Migrate(app,db)
-
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = "credentials.json"
 
 path1='model_training/saved_model/InceptionResnetV2.h5'
 path2="model_training/saved_model/InceptionV3.h5"
 path3="model_training/saved_model/ResNet50.h5"
-
-# Path to google cloud model
-# bucket_path = "gs://mds5_bucket_1"
-# path1 = bucket_path + "/InceptionResNetV2"
-# path2 = bucket_path + "/InceptionV3"
-# path3 = bucket_path + "/ResNet50"
 
 model1 = tf.keras.models.load_model(path1)
 model2 = tf.keras.models.load_model(path2)
@@ -73,14 +58,13 @@ def model_predict(image, all = False):
 
     IMG = []
     RESIZE = 299
+    image = np.asarray(image.convert("RGB")) # change to RGB
     img = cv2.resize(image, (RESIZE,RESIZE)) # resize image
     IMG.append(np.array(img))
     data = np.array(IMG)
     pred1 = model1.predict(data) 
 
     if all:
-        read = lambda imname: np.asarray(Image.open(imname).convert("RGB"))
-
         pred2 = model2.predict(data) 
 
         RESIZE = 224
@@ -105,24 +89,22 @@ def upload_file():
         mimetype = pic.mimetype
 
         img = image(img = pic.read(), mimetype = mimetype, name = filename)
-        # img = Img(mimetype = mimetype, name = filename)
         db.session.add(img)
         db.session.commit()
 
         return render_template('beforeresults.html') 
 
-def get_image(db=db): # added db argument for testing
+def get_image(db=db): 
     """
     Retrieves the image inputted from the database
     """
-    # retrieved_img = db.session.query(image).first()
     retrieved_img = db.session.query(image).order_by(image.id.desc()).first()
     if not retrieved_img:
         return 'No image found', 404
-    ret_img = np.array(Image.open(io.BytesIO(retrieved_img.img))) 
+    ret_img = Image.open(io.BytesIO(retrieved_img.img))
     return ret_img 
 
-def delete_images(db=db): # added db argument for testing
+def delete_images(db=db):
     """
     Deletes all images in the database
     """
