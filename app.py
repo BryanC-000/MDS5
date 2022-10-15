@@ -3,14 +3,10 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import io
-
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 from PIL import Image
 from flask_sqlalchemy import SQLAlchemy
-
-from db import db
-from models import image
 
 ####### Initialise Global Variables & Configure the Application #######
 app = Flask(__name__)
@@ -19,10 +15,21 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:54
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+class image(db.Model):
+    """
+    Schema for the database table for images   
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    img = db.Column(db.LargeBinary, nullable=False)
+    name = db.Column(db.String, nullable=False, primary_key = True)
+    mimetype = db.Column(db.String, nullable=False)
+
+# File paths of the trained deep learning models
 path1='model_training/saved_model/InceptionResnetV2.h5'
 path2="model_training/saved_model/InceptionV3.h5"
 path3="model_training/saved_model/ResNet50.h5"
 
+# Loading the deep learning models
 model1 = tf.keras.models.load_model(path1)
 model2 = tf.keras.models.load_model(path2)
 model3 = tf.keras.models.load_model(path3)
@@ -31,7 +38,7 @@ model3 = tf.keras.models.load_model(path3)
 @app.route('/', methods=['GET', 'POST'])
 def home():
     """
-    Renders the upload page and ensures that the database is empty
+    Renders the upload page and ensures that the database is empty.
     """ 
     delete_images()
     return render_template('upload.html')
@@ -39,7 +46,7 @@ def home():
 @app.route('/aboutus', methods = ['GET', 'POST'])
 def about_us():
     """
-    Renders the about us page
+    Renders the about us page.
     """
     if request.method == 'POST':
         return render_template('aboutus.html')      
@@ -55,6 +62,9 @@ def about_the_model():
 def model_predict(image, all = False):
     """
     Gets the predicted class for the given image using only proposed model or all models
+
+    Input: An image 
+    Output: The classification of the input image into one of Benign, InSitu, Invasive or Normal
     """
     vals = ["Benign","InSitu","Invasive","Normal"]
 
@@ -98,7 +108,10 @@ def upload_file():
 
 def get_image(db=db): 
     """
-    Retrieves the image inputted from the database
+    Retrieves the last image uploaded from the database
+    
+    Input: The database to retrieve the image from
+    Output: The image retrieved from the database
     """
     retrieved_img = db.session.query(image).order_by(image.id.desc()).first()
     if not retrieved_img:
@@ -109,6 +122,8 @@ def get_image(db=db):
 def delete_images(db=db):
     """
     Deletes all images in the database
+    
+    Input: The database to delete the images from
     """
     db.session.query(image).delete() 
     db.session.commit()
