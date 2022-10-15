@@ -1,6 +1,4 @@
-import time
-start = time.time()
-
+####### IMPORTS #######
 import shutil
 import os
 import cv2
@@ -25,6 +23,7 @@ from keras.optimizers import Adam
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, classification_report
 
+####### Model Building Functions #######
 def Dataset_loader(DIR, RESIZE):
 	"""
 	Function to load images
@@ -157,6 +156,7 @@ def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filep
 	
 	return history
 
+####### Model Evaluation Functions #######
 def evaluate_model(model, x_test, y_test):
 	"""
 	Evaluates the performance of a model given a testing dataset
@@ -232,6 +232,7 @@ def plot_training_progress(history):
     history_df = pd.DataFrame(history.history)
     history_df[['accuracy', 'val_accuracy','loss', 'val_loss']].plot()
 
+####### Main Function #######
 def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE, WEIGHT_PATH, SAVE_PATH, BASE_MODEL):
 	"""
 	Executes the entire process of:
