@@ -1,3 +1,4 @@
+####### IMPORTS #######
 import numpy as np
 import tensorflow as tf
 import cv2
@@ -11,6 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from db import db
 from models import image
 
+####### Initialise Global Variables & Configure the Application #######
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploaded'
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://mds5:postgres@localhost:5432/mds5"
@@ -25,6 +27,7 @@ model1 = tf.keras.models.load_model(path1)
 model2 = tf.keras.models.load_model(path2)
 model3 = tf.keras.models.load_model(path3)
 
+####### Application Functions #######
 @app.route('/', methods=['GET', 'POST'])
 def home():
     """
@@ -53,7 +56,6 @@ def model_predict(image, all = False):
     """
     Gets the predicted class for the given image using only proposed model or all models
     """
-    
     vals = ["Benign","InSitu","Invasive","Normal"]
 
     IMG = []
