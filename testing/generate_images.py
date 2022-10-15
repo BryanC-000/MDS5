@@ -39,8 +39,45 @@ def generate_images_diff_type():
             img = cv2.resize(img, (224,224)) 
             filepath = f"{output_path}/{ftype}_image.{ftype}"
             data = Image.fromarray(img)
-            data.save(filepath)            
+            data.save(filepath)       
+
+def generate_image_grayscale():
+    """
+    Function to generate a given image in grayscale
+    """
+    try:
+        os.mkdir(output_path)   
+    except FileExistsError:
+        pass
+    finally:
+        read = lambda imname: np.asarray(Image.open(imname).convert("L"))                
+        img = read(image_path)                      
+        filepath = f"{output_path}/grayscale_image_insitu.png"
+        data = Image.fromarray(img)
+        data.save(filepath)
+
+def generate_image_CMYK():
+    """
+    Function to generate a given image in CMYK
+    """
+    try:
+        os.mkdir(output_path)   
+    except FileExistsError:
+        pass
+    finally:
+        image = cv2.imread(image_path)
+        img = image.astype(np.float64)/255.
+        K = 1 - np.max(img, axis=2)
+        C = (1-img[...,2] - K)/(1-K)
+        M = (1-img[...,1] - K)/(1-K)
+        Y = (1-img[...,0] - K)/(1-K)
+        CMYK_image= (np.dstack((C,M,Y,K)) * 255).astype(np.uint8)
+        os.chdir(output_path)
+        cv2.imwrite('CMYK_image_insitu.png', CMYK_image)
 
 if __name__ == "__main__":
     generate_images_diff_dimension()
     generate_images_diff_type()
+    generate_image_grayscale()
+    generate_image_CMYK()
+    
