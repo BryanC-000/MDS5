@@ -1,3 +1,7 @@
+"""
+This file is the main file used to run the web application.
+"""
+
 ####### IMPORTS #######
 import numpy as np
 import tensorflow as tf

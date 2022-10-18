@@ -1,3 +1,6 @@
+"""
+This file tests the algorithms used to build and evaluate the model
+"""
 import unittest
 import sys
 import os
@@ -114,7 +117,7 @@ class BuildModelTest(unittest.TestCase):
         """
         self.assertIsNotNone(self.model)
         self.assertEqual(type(self.model.optimizer), keras.optimizers.Adam)
-        layer = self.model.get_layer('dense')
+        layer = self.model.get_layer('output')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_nadam(self):
@@ -124,7 +127,7 @@ class BuildModelTest(unittest.TestCase):
         model_nadam = model_building_evaluation.build_model(self.myModel,0.0001,'nadam')
         self.assertIsNotNone(model_nadam)
         self.assertEqual(type(model_nadam.optimizer), keras.optimizers.Nadam)
-        layer = model_nadam.get_layer('dense_4')
+        layer = model_nadam.get_layer('output')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_adagrad(self):
@@ -134,7 +137,7 @@ class BuildModelTest(unittest.TestCase):
         model_adagrad = model_building_evaluation.build_model(self.myModel,0.0001,'adagrad')
         self.assertIsNotNone(model_adagrad)
         self.assertEqual(type(model_adagrad.optimizer), keras.optimizers.Adagrad)
-        layer = model_adagrad.get_layer('dense_3')
+        layer = model_adagrad.get_layer('output')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_rmsprop(self):
@@ -144,7 +147,7 @@ class BuildModelTest(unittest.TestCase):
         model_rmsprop = model_building_evaluation.build_model(self.myModel,0.0001,'rmsprop')
         self.assertIsNotNone(model_rmsprop)
         self.assertEqual(type(model_rmsprop.optimizer), keras.optimizers.RMSprop)
-        layer = model_rmsprop.get_layer('dense_5')
+        layer = model_rmsprop.get_layer('output')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_adadelta(self):
@@ -154,7 +157,7 @@ class BuildModelTest(unittest.TestCase):
         model_adadelta = model_building_evaluation.build_model(self.myModel,0.0001,'adadelta')
         self.assertIsNotNone(model_adadelta)
         self.assertEqual(type(model_adadelta.optimizer), keras.optimizers.Adadelta)
-        layer = model_adadelta.get_layer('dense_2')
+        layer = model_adadelta.get_layer('output')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_optimizer_sgd(self):
@@ -164,7 +167,7 @@ class BuildModelTest(unittest.TestCase):
         model_sgd = model_building_evaluation.build_model(self.myModel,0.0001,'sgd')
         self.assertIsNotNone(model_sgd)
         self.assertEqual(type(model_sgd.optimizer), keras.optimizers.SGD)
-        layer = model_sgd.get_layer('dense_6')
+        layer = model_sgd.get_layer('output')
         self.assertEqual(layer.output_shape[1],4) #test if the model have 4 output nodes
 
     def test_build_model_include_false(self):

@@ -1,3 +1,6 @@
+"""
+This file shows how to generate the different images for testing purposes
+"""
 import os
 import cv2
 import numpy as np
@@ -7,7 +10,9 @@ output_path = "testing/testing_files/test_images"
 image_path = "model_training/Photos/InSitu/is001.tif"
 def generate_images_diff_dimension():
     """
-    function to generate an image with different dimensions
+    Function to generate an image with different dimensions
+    Input: -
+    Output: -
     """
     dimensions = [(1000,1000),(660,780),(470,625),(450,625),(400,515),(322,400),(50,63),(7,11),(4,4),(1,1)]
     try:
@@ -26,6 +31,8 @@ def generate_images_diff_dimension():
 def generate_images_diff_type():
     """
     Function to generate a given image in different extension
+    Input: -
+    Output: -
     """
     filetype = ["png", "jpeg", "jpg", "tif", "pdf"]
     try:
@@ -44,6 +51,8 @@ def generate_images_diff_type():
 def generate_image_grayscale():
     """
     Function to generate a given image in grayscale
+    Input: -
+    Output: -
     """
     try:
         os.mkdir(output_path)   
@@ -59,6 +68,8 @@ def generate_image_grayscale():
 def generate_image_CMYK():
     """
     Function to generate a given image in CMYK
+    Input: -
+    Output: -
     """
     try:
         os.mkdir(output_path)   

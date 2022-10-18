@@ -1,3 +1,9 @@
+/* 
+ This file defines the CSS styling applied to specific elements, classes, and IDs.
+*/
+
+
+/* Custom styling for HTML elements */
 * {
 	font-family: 'Source Sans Pro', sans-serif;
 }
@@ -44,6 +50,7 @@ input[type=file] {
 	border-radius: 5px;
 }
 
+/* Custom styling for specific element IDs */
 #title {
 	font-weight: 100px;
 	font-weight: 200px;
@@ -106,6 +113,7 @@ input[type=file] {
 	margin-top: 0px;
 }
 
+/* Custom styling for specific element classes */
 .page {
 	width: 80%;
 	margin: auto;

@@ -1,3 +1,7 @@
+"""
+This file shows how the deep learning model is built and evaluated across different matrices
+"""
+
 ####### IMPORTS #######
 import shutil
 import os
@@ -26,7 +30,12 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 ####### Model Building Functions #######
 def Dataset_loader(DIR, RESIZE):
 	"""
-	Function to load images
+	Function to load images for a given directory
+	
+	Input: DIR, which is the existing breast histology dataset file path 
+	       Resize, which The new image size
+
+	Output: IMG, which is an array of images loaded as numpy arrays
 	"""
 	IMG = []
 	read = lambda imname: np.asarray(Image.open(imname).convert("RGB"))
@@ -41,7 +50,12 @@ def Dataset_loader(DIR, RESIZE):
 
 def create_labels(array, num_class):
 	"""
-	Creates labels and shuffles the data given an array of images belonging to different classes
+	Function to create labels and shuffle the data given an array of images belonging to different classes
+
+	Input: Array: An array of images belonging to different classes
+		   num_class: The number of classes to classify the breast image into
+	Output: X: Shuffled data
+	        Y: Shuffled label
 	"""
 	labels = [0] * len(array)
 	for i in range(len(array)):
@@ -63,6 +77,18 @@ def create_labels(array, num_class):
 def train_valid_test_split(X, Y, train_size, random = 1234):
 	"""
 	Function to split a given dataset into training, validation and testing datasets where validation and testing portions are the same size
+	Input: X: The shuffled data
+		   Y: The shuffled labels of the data encoded in one-hot
+           Train size: The size to split the training data
+           Random: seed value (Default = 1234)
+
+	Output: x_train: The training data
+	        y_train: The label of the training set
+			x_val: The validation data
+			y_val: The label of the validation set
+			x_test: The testing data
+			y_test: the label of the testing set
+			
 	"""
 	# Training set
 	x_train, X_remainder, y_train, Y_remainder = train_test_split(
@@ -80,7 +106,12 @@ def train_valid_test_split(X, Y, train_size, random = 1234):
 
 def export_images(x, y, labels, path):
 	"""
-	class_labels = ["benign", "insitu", "invasive", "normal"]
+	Function to save the exported images into a specific filepath
+	Input: x: The data (images as numpy array)
+		   y: The labels encoded in one-hot 
+		   labels: The sets of label value in a list
+		   path: The file path to save the given images
+	Output: -
 	"""
 	try:
 		shutil.rmtree(path)
@@ -97,6 +128,12 @@ def export_images(x, y, labels, path):
 def build_model(backbone, lr=1e-4, opt = "adam", include = False, num_class = 4):
 	"""
 	Function to build a model given a backbone model as the feature extractor.
+	Input: Backbone: The backbone architecture 
+		   Learning rate: The learning rate to be used in our optimizer
+		   Optimizer: The optimizer to be used
+		   Include: Boolean (Default = False where True = Include the dropout layer and the batch normalisation layer and False = Don't include) 
+		   Num_classes: The number of classes to classify the prediction into
+	Output: The model built with the specified parameters
 	"""
 	model = Sequential()
 	model.add(backbone)
@@ -104,7 +141,7 @@ def build_model(backbone, lr=1e-4, opt = "adam", include = False, num_class = 4)
 	if include:
 		model.add(layers.Dropout(0.5))
 		model.add(layers.BatchNormalization())
-	model.add(layers.Dense(num_class, activation='softmax'))
+	model.add(layers.Dense(num_class, activation='softmax', name = "output"))
 	
 	if opt == 'adam':
 		optimizer = keras.optimizers.Adam(lr)
@@ -123,9 +160,18 @@ def build_model(backbone, lr=1e-4, opt = "adam", include = False, num_class = 4)
 	
 	return model
 
-def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filepath):
+def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filepath, verbose = 1):
 	"""
-	Trains a model given the training and validation datasets along with the required hyperparameters
+	Function to train a model given the training and validation datasets along with the required hyperparameters
+	Input: Model: The deep learning model built 
+		   X_train: The training data 
+	       Y_train: The label of the training data
+           X_val: The validation data 
+           Y_val: The label of the validation data 
+           Batch_size: The number of training examples utilised in one iteration
+           Epochs:  The number of times the learning algorithm will work through the entire training dataset
+           Filepath: The file path to checkpoint and save the model to
+	Output: The training history of the model
 	"""
 	# Data augmentation
 	train_generator = ImageDataGenerator(
@@ -138,13 +184,13 @@ def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filep
 	# Model callbacks
 	# Learning Rate Reducer
 	learn_control = ReduceLROnPlateau(monitor='val_accuracy', patience=5,
-									verbose=1,factor=0.2, min_lr=1e-7)
+									verbose=verbose,factor=0.2, min_lr=1e-7)
 
 	# Checkpoint
-	checkpoint = ModelCheckpoint(filepath, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
+	checkpoint = ModelCheckpoint(filepath, monitor='val_accuracy', verbose=verbose, save_best_only=True, mode='max')
 
 	# Early stopping
-	early_checkpoint = EarlyStopping(patience = 10, monitor = 'val_accuracy', mode = "max")   
+	early_checkpoint = EarlyStopping(patience = 7, monitor = 'val_accuracy', mode = "max")   
 	history = model.fit(
 		train_generator.flow(x_train, y_train, batch_size=batch_size), 
 		steps_per_epoch=x_train.shape[0] / batch_size,      
@@ -159,7 +205,14 @@ def train_model(model, x_train, y_train, x_val, y_val, batch_size, epochs, filep
 ####### Model Evaluation Functions #######
 def evaluate_model(model, x_test, y_test):
 	"""
-	Evaluates the performance of a model given a testing dataset
+	Function to evaluate the performance of a model given a testing dataset
+	Input: Model: The deep learning model built
+           X_test: The testing dataset
+           Y_test: The label of the testing dataset 
+	Output: Accuracy:  A ratio of correctly predicted observation to the total observations
+	        Precision: The ratio of correctly predicted positive observations to the total predicted positive observations.
+			Recall: The ratio of correctly predicted positive observations to the all observations in actual class 
+			F1-score: The weighted average of Precision and Recall
 	"""
 	y_pred = model.predict(x_test)   
 	accuracy = accuracy_score(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1)) 
@@ -171,7 +224,12 @@ def evaluate_model(model, x_test, y_test):
 
 def kfold(k, x_train, y_train, model):
     """
-    K fold cross validation
+    Function to perform K fold cross validation
+	Input: K: The number of folds 
+           X_train: The training data 
+           Y_train: The label of the training data 
+           Model: The deep learning model built 
+	Output: The average accuracy score of all folds
     """
     kf = KFold(n_splits=k, random_state=None)
  
@@ -202,7 +260,14 @@ def kfold(k, x_train, y_train, model):
 
 def plot_confusion_matrix(y_test, y_pred, classes, title, normalize = False):
     """
-    Plot a confusion matrix
+    Function to plot a confusion matrix
+	Input: y_test: The actual label of the testing set
+	       y_pred: The predicted label of the testing set
+		   classes: The number of classes
+		   Title: The title of the plot
+		   Normalize: Boolean whether to normalize the confusion matrix
+
+	Output: A confusion matrix plotted
     """
     cm = confusion_matrix(np.argmax(y_test, axis=1), np.argmax(y_pred, axis=1))
     plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
@@ -223,37 +288,48 @@ def plot_confusion_matrix(y_test, y_pred, classes, title, normalize = False):
 
     return cm
 
-def plot_training_progress(history):
+def plot_training_accuracies(history):
     """
-    Plot graph of training progress
+    Function to plot graph of training progress - accuracies
+	Input: The history of the model training
+	Output: -
     """
-    # with open("model_training/history.json", 'r') as f:
-    #     history = json.loads(f.read())
     history_df = pd.DataFrame(history.history)
-    history_df[['accuracy', 'val_accuracy','loss', 'val_loss']].plot()
+    history_df[['accuracy', 'val_accuracy']].plot()
+
+def plot_training_losses(history):
+    """
+    Function to plot graph of training progress - losses
+	Input: The history of the model training
+	Output: -
+    """
+    history_df = pd.DataFrame(history.history)
+    history_df[['loss', 'val_loss']].plot()
 
 ####### Main Function #######
-def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE, WEIGHT_PATH, SAVE_PATH, BASE_MODEL):
+def build_evaluate_model(DATA, IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE, WEIGHT_PATH, SAVE_PATH, BASE_MODEL):
 	"""
-	Executes the entire process of:
-	- data loading
-	- data preprocessing
-	- data splitting
-	- model building and training
+	Function to build and evaluates a model
+	Input:  DATA: x_train: The training data
+	       	      y_train: The label of the training set
+				  x_val: The validation data
+				  y_val: The label of the validation set
+				  x_test: The testing data
+				  y_test: the label of the testing set
+			IMG_SIZE: The size of the image to be fit into the model (resize)
+			BATCH_SIZE: The number of training examples utilised in one iteration
+           	EPOCHS:  The number of times the learning algorithm will work through the entire training dataset
+			LEARNING_RATE,: The learning rate to be used in our optimizer
+		    OPTIMIZER: The optimizer to be used
+		    INCLUDE: Boolean (Default = False where True = Include the dropout layer and the batch normalisation layer and False = Don't include) 
+		    WEIGHT_PATH: The file path to checkpoint and save the weights to
+			SAVE_PATH: The path to save the model into
+			BASE_MODEL: The name of the backbone architecture
+
+	Output: -
 	"""
-	# Loading the dataset for each class
-	benign_data = np.array(Dataset_loader('model_training/Photos/Benign',IMG_SIZE))
-	insitu_data = np.array(Dataset_loader('model_training/Photos/InSitu',IMG_SIZE))
-	invasive_data = np.array(Dataset_loader('model_training/Photos/Invasive',IMG_SIZE))
-	normal_data = np.array(Dataset_loader('model_training/Photos/Normal',IMG_SIZE))
-
-	X, Y = create_labels([benign_data, insitu_data,invasive_data, normal_data], 4)
-
-	x_train, x_val, x_test, y_train, y_val, y_test = train_valid_test_split(X, Y, 0.7)
-
-	export_images(x_test, y_test, labels = ["benign", "insitu", "invasive", "normal"], path = "exported_images")
-
-	if BASE_MODEL == "InceptionResNetV2":
+	x_train, x_val, x_test, y_train, y_val, y_test = DATA
+	if BASE_MODEL == "InceptionResnetV2":
 		myModel = InceptionResNetV2(weights='imagenet',include_top=False,input_shape=(IMG_SIZE,IMG_SIZE,3))
 	elif BASE_MODEL == "InceptionV3":
 		myModel = InceptionV3(weights='imagenet',include_top=False,input_shape=(IMG_SIZE,IMG_SIZE,3))
@@ -286,14 +362,27 @@ def main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE, WEIGHT
 	print(cm)
 
 if __name__ == "__main__":
-	IMG_SIZE = 224
+	# Defining parameters
+	IMG_SIZE = 299
 	BATCH_SIZE = 16
 	EPOCHS = 50
 	LEARNING_RATE = 0.0001
 	OPTIMIZER = "adam"
 	INCLUDE_BN_DROPOUT = True
-	WEIGHT_PATH = "model_training/weights/weights.InceptionResNetV2.hdf5"
-	SAVE_PATH = "model_training/saved_model/InceptionResNetV2.h5"
-	BASE_MODEL = "InceptionResNetV2"
+	WEIGHT_PATH = "model_training/weights/weights.InceptionResnetV2.hdf5"
+	SAVE_PATH = "model_training/saved_model/InceptionResnetV2.h5"
+	BASE_MODEL = "InceptionResnetV2"
 
-	main(IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE_BN_DROPOUT, WEIGHT_PATH, SAVE_PATH, BASE_MODEL)
+	# Loading the dataset for each class
+	benign_data = np.array(Dataset_loader('model_training/Photos/Benign', IMG_SIZE))
+	insitu_data = np.array(Dataset_loader('model_training/Photos/InSitu',IMG_SIZE))
+	invasive_data = np.array(Dataset_loader('model_training/Photos/Invasive',IMG_SIZE))
+	normal_data = np.array(Dataset_loader('model_training/Photos/Normal',IMG_SIZE))
+
+	X, Y = create_labels([benign_data, insitu_data,invasive_data, normal_data], 4)
+
+	x_train, x_val, x_test, y_train, y_val, y_test = train_valid_test_split(X, Y, 0.7)
+	DATA = (x_train, x_val, x_test, y_train, y_val, y_test)
+	export_images(x_test, y_test, labels = ["benign", "insitu", "invasive", "normal"], path = "exported_images")
+
+	build_evaluate_model(DATA, IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE_BN_DROPOUT, WEIGHT_PATH, SAVE_PATH, BASE_MODEL)																																																																																																														

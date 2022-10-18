@@ -1,13 +1,24 @@
-import unittest
+"""
+This file is a testing file that is used to test the routing functionality of the Flask web application
+"""
+
+####### IMPORTS #######
 import pytest
 import sys
 import os
-import io
 sys.path.insert(1, os.path.join(sys.path[0], '../..'))
 from app import app, db, delete_images
 
+####### Test Functions #######
 @pytest.fixture(scope='module')
 def test_client():
+    """
+    Function to enable access to local contexts via the app's context manager
+        
+    Input: none
+
+    Output: none
+    """
     flask_app = app
 
     # Create a test client using the Flask application configured for testing
@@ -20,72 +31,89 @@ def test_client():
 
 def test_home_page(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/' page is requested (GET)
-    THEN check that the response is valid
+    Function to check if the response is valid when the '/' page is requested (GET)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.get('/')
     assert response.status_code == 200
 
 def test_home_page_post(test_client):
     """
-    GIVEN a Flask application
-    WHEN the '/' page is posted to (POST)
-    THEN check that the response is valid
+    Function to check if the response is valid when the '/' page is posted to (POST)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.post('/')
     assert response.status_code == 200
 
 def test_about_us_page(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/aboutus' page is requested (GET)
-    THEN check that the response returns '500'
+    Function to check if the response returns '500' when the '/aboutus' page is requested (GET)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.get('/aboutus')
     assert response.status_code == 500
 
 def test_about_us_page_post(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/aboutus' page is posted to (POST)
-    THEN check that the response is valid
+    Function to check if the response is valid when the '/aboutus' page is posted to (POST)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.post('/aboutus')
     assert response.status_code == 200
 
 def test_about_the_model_page(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/aboutthemodel' page is requested (GET)
-    THEN check that the response returns '500'
+    Function to check if the response returns '500' when the '/aboutthemodel' page is requested (GET)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.get('/aboutthemodel')
     assert response.status_code == 500
 
 def test_about_the_model_page_post(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/aboutthemodel' page is posted to (POST)
-    THEN check that the response is valid
+    Function to check if the response is valid when the '/aboutthemodel' page is posted to (POST)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.post('/aboutthemodel')
     assert response.status_code == 200
 
 def test_before_results_page(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/uploaded' page is requested (GET)
-    THEN check that the response returns '500'
+    Function to check if the response returns '500' when the '/uploaded' page is requested (GET)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.get('/uploaded')
     assert response.status_code == 500
 
 def test_before_results_page_post(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/uploaded' page is posted to (POST)
-    THEN check that the response is valid
+    Function to check if the response is valid when the '/uploaded' page is posted to (POST)
+    and a valid image/data is posted
+        
+    Input: test client
+
+    Output: none
     """
     # Test if an '200' response is returned when a valid image/data is posted
     img = "testing/testing_files/test_load_images/PNG/4_normal.png"
@@ -100,7 +128,17 @@ def test_before_results_page_post(test_client):
     )
     assert response.status_code == 200
 
+def test_before_results_page_post_bad_request(test_client):
+    """
+    Function to check if the response returns '400' when the '/uploaded' page is posted to (POST)
+    and a invalid image/data is posted
+        
+    Input: test client
+
+    Output: none
+    """
     # Test if an '400' bad request response is returned when an invalid image/data is posted
+    img = "testing/testing_files/test_load_images/PNG/4_normal.png"
     img_data = open(img, "rb")
     
     response = test_client.post(
@@ -113,9 +151,11 @@ def test_before_results_page_post(test_client):
 
 def test_proposed_model_results_page(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/proposedmodelresult' page is requested (GET)
-    THEN check that the response returns '500'
+    Function to check if the response returns '500' when the '/proposedmodelresult' page is requested (GET)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.get('/proposedmodelresult')
 
@@ -123,12 +163,14 @@ def test_proposed_model_results_page(test_client):
 
 def test_proposed_model_results_page_post(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/proposedmodelresult' page is requested (POST)
-    THEN check that the response is valid
+    Function to check if the response is valid when the '/proposedmodelresult' page is posted to (POST)
+    and an image has been added to the database
+        
+    Input: test client
+
+    Output: none
     """
     # test after adding image
-    # image added
     img = "testing/testing_files/test_load_images/PNG/4_normal.png"
     img_data = open(img, "rb")
     data = {"pic": (img_data, "image.png")}
@@ -143,6 +185,15 @@ def test_proposed_model_results_page_post(test_client):
     response = test_client.post('/proposedmodelresult')
     assert response.status_code == 200
 
+def test_proposed_model_results_page_post_del_images(test_client):
+    """
+    Function to check if the response returns '500' when the '/proposedmodelresult' page is posted to (POST)
+    and there are no images in the database
+        
+    Input: test client
+
+    Output: none
+    """
     # test after deleting images
     delete_images(db)
     response = test_client.post('/proposedmodelresult')
@@ -150,22 +201,25 @@ def test_proposed_model_results_page_post(test_client):
     
 def test_all_model_results_page(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/allmodelresult' page is requested (GET)
-    THEN check that the response returns '500'
+    Function to check if the response returns '500' when the '/allmodelresult' page is requested (GET)
+        
+    Input: test client
+
+    Output: none
     """
     response = test_client.get('/allmodelresult')
-
     assert response.status_code == 500
 
 def test_all_model_results_page_post(test_client):
     """
-    GIVEN a Flask application configured for testing
-    WHEN the '/allmodelresult' page is requested (POST)
-    THEN check that the response is valid
+    Function to check if the response returns is valid when the '/allmodelresult' page is posted to (POST)
+    and an image has been added to the database
+        
+    Input: test client
+
+    Output: none
     """
     # test after adding image
-    # image added
     img = "testing/testing_files/test_load_images/PNG/4_normal.png"
     img_data = open(img, "rb")
     data = {"pic": (img_data, "image.png")}
@@ -180,6 +234,15 @@ def test_all_model_results_page_post(test_client):
     response = test_client.post('/allmodelresult')
     assert response.status_code == 200
 
+def test_all_model_results_page_post_del_images(test_client):
+    """
+    Function to check if the response returns '500' when the '/allmodelresult' page is posted to (POST)
+    and there are no images in the database
+        
+    Input: test client
+
+    Output: none
+    """
     # test after deleting images
     delete_images(db)
     response = test_client.post('/allmodelresult')
