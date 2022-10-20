@@ -3,6 +3,7 @@ This file shows how the deep learning model is built and evaluated across differ
 """
 
 ####### IMPORTS #######
+from distutils.command.build import build
 import shutil
 import os
 import cv2
@@ -360,7 +361,7 @@ def build_evaluate_model(DATA, IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTI
 	cm = plot_confusion_matrix(y_test, y_pred, ['benign', 'insitu', 'invasive', 'normal'] , title ='Confusion Metrix for Breast Cancer')
 	print("Confusion Matrix")
 	print(cm)
-
+	
 if __name__ == "__main__":
 	# Defining parameters
 	IMG_SIZE = 299
@@ -385,4 +386,4 @@ if __name__ == "__main__":
 	DATA = (x_train, x_val, x_test, y_train, y_val, y_test)
 	export_images(x_test, y_test, labels = ["benign", "insitu", "invasive", "normal"], path = "exported_images")
 
-	build_evaluate_model(DATA, IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE_BN_DROPOUT, WEIGHT_PATH, SAVE_PATH, BASE_MODEL)																																																																																																														
+	build_evaluate_model(DATA, IMG_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, OPTIMIZER, INCLUDE_BN_DROPOUT, WEIGHT_PATH, SAVE_PATH, BASE_MODEL)

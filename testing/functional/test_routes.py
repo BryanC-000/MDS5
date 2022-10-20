@@ -15,9 +15,9 @@ def test_client():
     """
     Function to enable access to local contexts via the app's context manager
         
-    Input: none
+    Input: -
 
-    Output: none
+    Output: -
     """
     flask_app = app
 
@@ -35,7 +35,7 @@ def test_home_page(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.get('/')
     assert response.status_code == 200
@@ -46,7 +46,7 @@ def test_home_page_post(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.post('/')
     assert response.status_code == 200
@@ -57,7 +57,7 @@ def test_about_us_page(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.get('/aboutus')
     assert response.status_code == 500
@@ -68,7 +68,7 @@ def test_about_us_page_post(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.post('/aboutus')
     assert response.status_code == 200
@@ -79,7 +79,7 @@ def test_about_the_model_page(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.get('/aboutthemodel')
     assert response.status_code == 500
@@ -90,7 +90,7 @@ def test_about_the_model_page_post(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.post('/aboutthemodel')
     assert response.status_code == 200
@@ -101,7 +101,7 @@ def test_before_results_page(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.get('/uploaded')
     assert response.status_code == 500
@@ -113,7 +113,7 @@ def test_before_results_page_post(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     # Test if an '200' response is returned when a valid image/data is posted
     img = "testing/testing_files/test_load_images/PNG/4_normal.png"
@@ -135,7 +135,7 @@ def test_before_results_page_post_bad_request(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     # Test if an '400' bad request response is returned when an invalid image/data is posted
     img = "testing/testing_files/test_load_images/PNG/4_normal.png"
@@ -155,7 +155,7 @@ def test_proposed_model_results_page(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.get('/proposedmodelresult')
 
@@ -168,7 +168,7 @@ def test_proposed_model_results_page_post(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     # test after adding image
     img = "testing/testing_files/test_load_images/PNG/4_normal.png"
@@ -192,7 +192,7 @@ def test_proposed_model_results_page_post_del_images(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     # test after deleting images
     delete_images(db)
@@ -205,7 +205,7 @@ def test_all_model_results_page(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     response = test_client.get('/allmodelresult')
     assert response.status_code == 500
@@ -217,7 +217,7 @@ def test_all_model_results_page_post(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     # test after adding image
     img = "testing/testing_files/test_load_images/PNG/4_normal.png"
@@ -241,7 +241,7 @@ def test_all_model_results_page_post_del_images(test_client):
         
     Input: test client
 
-    Output: none
+    Output: -
     """
     # test after deleting images
     delete_images(db)

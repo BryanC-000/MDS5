@@ -20,9 +20,9 @@ class InitialiseDatabaseTest(unittest.TestCase):
         """
         Function to define instructions that will be executed before each test method
         
-        Input: none
+        Input: -
 
-        Output: none
+        Output: -
         """
         self.app = Flask(__name__)
         self.app.config['TESTING'] = True
@@ -41,9 +41,9 @@ class InitialiseDatabaseTest(unittest.TestCase):
         """
         Function to define instructions that will be executed after each test method
         
-        Input: none
+        Input: -
 
-        Output: none
+        Output: -
         """
         self.app = Flask(__name__)
         self.db.init_app(self.app)
@@ -54,9 +54,9 @@ class InitialiseDatabaseTest(unittest.TestCase):
         """
         Function that tests if the new uploaded image is correctly saved with the correct id, name and mimetype.
         
-        Input: none
+        Input: -
 
-        Output: none
+        Output: -
         """
         pic = Image.open("model_training/Photos/Normal/n001.tif")
         filename = secure_filename(pic.filename) 
@@ -73,9 +73,9 @@ class InitialiseDatabaseTest(unittest.TestCase):
         """
         Function that tests if the database engine exists.
         
-        Input: none
+        Input: -
 
-        Output: none
+        Output: -
         """
         tester = os.path.exists(("/"+str(self.db.engine.url).strip("postgresql://mds5:postgres@localhost:5432/mds5")))
         self.assertTrue(tester)
@@ -84,9 +84,9 @@ class InitialiseDatabaseTest(unittest.TestCase):
         """
         Function that tests if the image file that is added to the database table is successfully stored in the database.
         
-        Input: none
+        Input: -
 
-        Output: none
+        Output: -
         """
         self.db.session.query(image).delete()
         self.db.session.commit()
@@ -110,9 +110,9 @@ class InitialiseDatabaseTest(unittest.TestCase):
         """
         Function that tests the get_image() function from app.py, to see if the image is successfully retreived from the database
         
-        Input: none
+        Input: -
 
-        Output: none
+        Output: -
         """
         self.db.session.query(image).delete() 
         self.db.session.commit()
@@ -134,9 +134,9 @@ class InitialiseDatabaseTest(unittest.TestCase):
         """
         Function that tests the get_image() function from app.py, to see if there is no image retrieved after attempting a retrieval from an empty database
         
-        Input: none
+        Input: -
 
-        Output: none
+        Output: -
         """
         self.db.session.query(image).delete()
         
@@ -147,9 +147,9 @@ class InitialiseDatabaseTest(unittest.TestCase):
         """
         Function that tests the delete_images(), to see if all existing images in the database table have successfully been removed from the database
         
-        Input: none
+        Input: -
 
-        Output: none
+        Output: -
         """
         self.db.session.query(image).delete()
         self.db.session.commit()

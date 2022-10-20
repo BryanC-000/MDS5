@@ -18,7 +18,7 @@ def test_models(IMG_SIZE, MODEL_PATH):
 
     Input: IMG_SIZE, the image size that the histology images need to be resized to for the specific model being used
            MODEL_PATH, the filepath of the saved model
-    Output: none
+    Output: -
     """
     benign_data = np.array(Dataset_loader('model_training/Photos/Benign',IMG_SIZE))
     insitu_data = np.array(Dataset_loader('model_training/Photos/InSitu',IMG_SIZE))
